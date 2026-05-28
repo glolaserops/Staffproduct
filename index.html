@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glo Staff Product Ordering System</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+  .app { max-width: 700px; margin: 0 auto; padding: 20px; }
+  .header { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; border-radius: 16px; padding: 24px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  .header p { font-size: 12px; opacity: 0.7; margin-top: 4px; }
+  .tab-btns { display: flex; gap: 8px; }
+  .tab-btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; }
+  .tab-btn.active { background: #e94560; color: white; }
+  .tab-btn.inactive { background: rgba(255,255,255,0.15); color: white; }
+  .card { background: white; border-radius: 14px; padding: 24px; margin-bottom: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+  .card h2 { font-size: 16px; color: #1a1a2e; margin-bottom: 16px; font-weight: 700; border-bottom: 2px solid #f0f4f8; padding-bottom: 10px; }
+  .form-group { margin-bottom: 14px; }
+  .form-group label { display: block; font-size: 13px; color: #555; margin-bottom: 5px; font-weight: 600; }
+  .form-group input { width: 100%; padding: 10px 14px; border: 2px solid #e8ecf0; border-radius: 9px; font-size: 14px; outline: none; }
+  .form-group input:focus { border-color: #e94560; }
+  .product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .product-card { border: 2px solid #e8ecf0; border-radius: 10px; padding: 12px; transition: all 0.2s; }
+  .product-card.selected { border-color: #e94560; background: #fff0f3; }
+  .product-name { font-size: 13px; font-weight: 700; color: #1a1a2e; }
+  .product-price { font-size: 12px; color: #e94560; margin-top: 2px; }
+  .qty-control { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+  .qty-btn { width: 28px; height: 28px; border-radius: 6px; border: none; background: #e94560; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .qty-btn:hover { background: #c73652; }
+  .qty-display { font-size: 14px; font-weight: 700; min-width: 24px; text-align: center; }
+  .summary-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; border-bottom: 1px solid #f0f4f8; }
+  .summary-total { display: flex; justify-content: space-between; padding: 10px 0 0; font-size: 15px; font-weight: 700; color: #1a1a2e; }
+  .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #e94560, #c73652); color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+  .btn-primary:hover { opacity: 0.9; }
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .stat-box { background: linear-gradient(135deg, #1a1a2e, #16213e); color: white; border-radius: 10px; padding: 14px; text-align: center; }
+  .stat-num { font-size: 22px; font-weight: 800; color: #e94560; }
+  .stat-label { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+  .order-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .order-table th { background: #f0f4f8; padding: 8px 10px; text-align: left; font-size: 12px; color: #555; }
+  .order-table td { padding: 8px 10px; border-bottom: 1px solid #f0f4f8; }
+  .product-summary { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #f0f4f8; font-size: 13px; }
+  .product-bar { background: #e94560; height: 6px; border-radius: 3px; margin-top: 3px; }
+  .success-screen { text-align: center; padding: 30px; }
+  .success-icon { font-size: 48px; margin-bottom: 12px; }
+  .btn-secondary { padding: 10px 24px; background: #f0f4f8; color: #1a1a2e; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 16px; }
+  .empty-state { text-align: center; padding: 30px; color: #aaa; font-size: 14px; }
+  .export-btn { padding: 8px 16px; background: #1a9e5c; color: white; border: none; border-radius: 9px; font-size: 13px; font-weight: 700; cursor: pointer; float: right; margin-top: -38px; }
+  .admin-actions { display: flex; gap: 8px; margin-top: 14px; }
+  .admin-actions button { flex: 1; padding: 10px; border-radius: 9px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .btn-danger { background: #ffe5e5; color: #d93025; }
+  .btn-toggle { background: #e8f0fe; color: #1967d2; }
+  .cutoff-setter { display: flex; gap: 8px; align-items: center; }
+  .cutoff-setter input { flex: 1; padding: 9px 12px; border: 2px solid #e8ecf0; border-radius: 8px; font-size: 13px; outline: none; }
+  .cutoff-setter button { padding: 9px 16px; background: #e94560; color: white; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
+  .tab-hidden { display: none; }
+  .admin-pass-form { max-width: 320px; margin: 0 auto; text-align: center; padding: 40px 0; }
+  .admin-pass-form input { width: 100%; padding: 10px 14px; border: 2px solid #e8ecf0; border-radius: 9px; font-size: 14px; text-align: center; outline: none; margin-bottom: 12px; }
+  .admin-pass-form input:focus { border-color: #e94560; }
+  .hint { font-size: 12px; color: #aaa; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div>
+      <h1>✨ GLO ORDERING</h1>
+      <p id="header-status">Staff Order Portal</p>
+    </div>
+    <div class="tab-btns">
+      <button class="tab-btn active" onclick="switchTab('staff')">Order</button>
+      <button class="tab-btn inactive" onclick="switchTab('admin')">Admin</button>
+    </div>
+  </div>
+
+  <!-- STAFF TAB -->
+  <div id="tab-staff">
+    <div id="order-form-view">
+      <div class="card">
+        <h2>👤 Your Details</h2>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="staff-name" placeholder="e.g. Siti Aminah" />
+        </div>
+        <div class="form-group">
+          <label>Staff ID / Branch</label>
+          <input type="text" id="staff-id" placeholder="e.g. KL-012 / HQ" />
+        </div>
+      </div>
+      <div class="card">
+        <h2>🛍️ Select Products</h2>
+        <div class="product-grid" id="product-grid"></div>
+      </div>
+      <div class="card" id="summary-card" style="display:none">
+        <h2>🧾 Order Summary</h2>
+        <div id="summary-lines"></div>
+        <div class="summary-total">
+          <span>Total</span>
+          <span id="summary-total-val">RM 0.00</span>
+        </div>
+      </div>
+      <button class="btn-primary" onclick="submitOrder()">Submit Order</button>
+    </div>
+
+    <div id="success-view" style="display:none">
+      <div class="card">
+        <div class="success-screen">
+          <div class="success-icon">✅</div>
+          <h2>Order Submitted!</h2>
+          <p id="success-msg"></p>
+          <button class="btn-secondary" onclick="resetForm()">Place Another Order</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="closed-view" style="display:none">
+      <div class="card">
+        <div class="success-screen">
+          <div class="success-icon">🔒</div>
+          <h2>Orders Closed</h2>
+          <p>The ordering window has ended. Please contact your admin.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADMIN TAB -->
+  <div id="tab-admin" class="tab-hidden">
+    <div id="admin-login-view">
+      <div class="card">
+        <div class="admin-pass-form">
+          <h2 style="margin-bottom:16px;color:#1a1a2e">🔐 Admin Access</h2>
+          <input type="password" id="admin-pw" placeholder="Enter password" onkeydown="if(event.key==='Enter')adminLogin()" />
+          <button class="btn-primary" onclick="adminLogin()" style="margin-top:0">Login</button>
+          <p class="hint">Default password: </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="admin-dashboard" style="display:none">
+      <div class="card">
+        <h2>⏰ Order Cutoff</h2>
+        <div class="cutoff-setter">
+          <input type="datetime-local" id="cutoff-input" />
+          <button onclick="setCutoff()">Set Cutoff</button>
+        </div>
+        <p id="cutoff-display" style="font-size:12px;color:#777;margin-top:8px"></p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box"><div class="stat-num" id="stat-orders">0</div><div class="stat-label">Orders</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-items">0</div><div class="stat-label">Items</div></div>
+        <div class="stat-box"><div class="stat-num" id="stat-rev">RM0</div><div class="stat-label">Total Value</div></div>
+      </div>
+
+      <div class="card">
+        <h2>📊 Product Summary</h2>
+        <div id="prod-summary"></div>
+      </div>
+
+      <div class="card">
+        <h2>📋 All Orders</h2>
+        <button class="export-btn" onclick="exportCSV()">⬇ Export CSV</button>
+        <div style="overflow-x:auto;margin-top:8px">
+          <table class="order-table">
+            <thead><tr><th>#</th><th>Name</th><th>ID/Branch</th><th>Items</th><th>Total</th><th>Time</th></tr></thead>
+            <tbody id="orders-body"></tbody>
+          </table>
+        </div>
+        <div id="empty-orders" class="empty-state" style="display:none">No orders yet.</div>
+        <div class="admin-actions">
+          <button class="btn-danger" onclick="clearOrders()">🗑 Clear All Orders</button>
+          <button class="btn-toggle" onclick="toggleOpen()">🔁 Toggle Open/Closed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzyuub3fimoPDLyRTFoZy8H4xCo8FIfTj7xNPH7ZpQKzQ7zOLePNs45vNzn-_KPx-CC/exec";
+const PRODUCTS = [
+  { name: "Glo Clean",    price: 168 },
+  { name: "Glo Reveal",   price: 168 },
+  { name: "Glo Protect+",  price: 168 },
+  { name: "Glo Hydraglo+ Mask", price: 188 },
+  { name: "Glo Hydro+",    price: 258 },
+  { name: "Glo Bright+",   price: 288 },
+  { name: "Glo Nourish",  price: 178 },
+];
+
+let orders = JSON.parse(localStorage.getItem('glo_orders') || '[]');
+let cutoff = localStorage.getItem('glo_cutoff') || '';
+let isOpen = localStorage.getItem('glo_open') !== 'false';
+let qty = {};
+PRODUCTS.forEach(p => qty[p.name] = 0);
+
+function save() {
+  localStorage.setItem('glo_orders', JSON.stringify(orders));
+  localStorage.setItem('glo_cutoff', cutoff);
+  localStorage.setItem('glo_open', isOpen);
+}
+
+function isClosed() {
+  if (!isOpen) return true;
+  if (cutoff && new Date() > new Date(cutoff)) return true;
+  return false;
+}
+
+function switchTab(tab) {
+  ['staff','admin'].forEach(t => document.getElementById('tab-'+t).classList.toggle('tab-hidden', t !== tab));
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.className = 'tab-btn ' + ((i===0&&tab==='staff')||(i===1&&tab==='admin') ? 'active' : 'inactive'));
+  if (tab === 'staff') checkStatus();
+  if (tab === 'admin') renderAdmin();
+}
+
+function initGrid() {
+  document.getElementById('product-grid').innerHTML = PRODUCTS.map(p => {
+    const k = p.name.replace(/ /g,'_');
+    return `<div class="product-card" id="pc-${k}">
+      <div class="product-name">${p.name}</div>
+      <div class="product-price">RM ${p.price}</div>
+      <div class="qty-control">
+        <button class="qty-btn" onclick="changeQty('${p.name}',-1)">−</button>
+        <span class="qty-display" id="q-${k}">0</span>
+        <button class="qty-btn" onclick="changeQty('${p.name}',1)">+</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function changeQty(name, d) {
+  qty[name] = Math.max(0, qty[name] + d);
+  const k = name.replace(/ /g,'_');
+  document.getElementById('q-'+k).textContent = qty[name];
+  document.getElementById('pc-'+k).classList.toggle('selected', qty[name] > 0);
+  updateSummary();
+}
+
+function updateSummary() {
+  const sel = PRODUCTS.filter(p => qty[p.name] > 0);
+  const sc = document.getElementById('summary-card');
+  if (!sel.length) { sc.style.display='none'; return; }
+  sc.style.display = 'block';
+  let total = 0;
+  document.getElementById('summary-lines').innerHTML = sel.map(p => {
+    const sub = p.price * qty[p.name]; total += sub;
+    return `<div class="summary-row"><span>${p.name} × ${qty[p.name]}</span><span>RM ${sub.toFixed(2)}</span></div>`;
+  }).join('');
+  document.getElementById('summary-total-val').textContent = 'RM ' + total.toFixed(2);
+}
+
+function submitOrder() {
+  if (isClosed()) { alert('Orders are currently closed.'); return; }
+  const name = document.getElementById('staff-name').value.trim();
+  const sid = document.getElementById('staff-id').value.trim();
+  if (!name || !sid) { alert('Please fill in your name and staff ID.'); return; }
+  const items = PRODUCTS.filter(p => qty[p.name] > 0).map(p => ({ name: p.name, qty: qty[p.name], price: p.price }));
+  if (!items.length) { alert('Please select at least one product.'); return; }
+  const total = items.reduce((s,i) => s + i.qty*i.price, 0);
+  const order = { id: orders.length+1, name, sid, items, total, time: new Date().toLocaleString('en-MY') };
+  orders.push(order);
+  save();
+
+  // Send to Google Sheets
+  fetch(SHEET_URL, {
+    method: 'POST',
+    body: JSON.stringify(order)
+  }).catch(() => {}); // silent fail — order still saved locally
+
+  document.getElementById('success-msg').textContent = `Order #${orders.length} recorded. Total: RM ${total.toFixed(2)}`;
+  document.getElementById('order-form-view').style.display = 'none';
+  document.getElementById('success-view').style.display = 'block';
+}
+
+function resetForm() {
+  PRODUCTS.forEach(p => qty[p.name] = 0);
+  document.getElementById('staff-name').value = '';
+  document.getElementById('staff-id').value = '';
+  initGrid();
+  document.getElementById('summary-card').style.display = 'none';
+  document.getElementById('success-view').style.display = 'none';
+  checkStatus();
+}
+
+function checkStatus() {
+  const closed = isClosed();
+  document.getElementById('order-form-view').style.display = closed ? 'none' : 'block';
+  document.getElementById('closed-view').style.display = closed ? 'block' : 'none';
+  document.getElementById('success-view').style.display = 'none';
+  document.getElementById('header-status').textContent = closed ? 'Orders CLOSED' : (cutoff ? 'Cutoff: '+new Date(cutoff).toLocaleString('en-MY') : 'Orders OPEN');
+}
+
+function adminLogin() {
+  if (document.getElementById('admin-pw').value === 'getgloing1234') {
+    document.getElementById('admin-login-view').style.display = 'none';
+    document.getElementById('admin-dashboard').style.display = 'block';
+    renderAdmin();
+  } else { alert('Wrong password.'); }
+}
+
+function renderAdmin() {
+  const totalItems = orders.reduce((s,o) => s + o.items.reduce((a,i) => a+i.qty,0), 0);
+  const totalRev = orders.reduce((s,o) => s+o.total, 0);
+  document.getElementById('stat-orders').textContent = orders.length;
+  document.getElementById('stat-items').textContent = totalItems;
+  document.getElementById('stat-rev').textContent = 'RM'+totalRev.toFixed(0);
+
+  const pt = {};
+  PRODUCTS.forEach(p => pt[p.name] = 0);
+  orders.forEach(o => o.items.forEach(i => pt[i.name] = (pt[i.name]||0)+i.qty));
+  const maxQ = Math.max(...Object.values(pt), 1);
+  document.getElementById('prod-summary').innerHTML = PRODUCTS.map(p =>
+    `<div class="product-summary">
+      <div style="flex:1">
+        <div style="font-weight:600;color:#1a1a2e">${p.name} <span style="color:#aaa;font-weight:400">· RM${p.price}</span></div>
+        <div class="product-bar" style="width:${(pt[p.name]/maxQ)*100}%"></div>
+      </div>
+      <div style="font-weight:700;color:#e94560;margin-left:16px">${pt[p.name]} units</div>
+    </div>`
+  ).join('');
+
+  const tbody = document.getElementById('orders-body');
+  tbody.innerHTML = orders.map(o =>
+    `<tr><td>#${o.id}</td><td>${o.name}</td><td>${o.sid}</td>
+     <td>${o.items.map(i => i.name+' ×'+i.qty).join(', ')}</td>
+     <td style="font-weight:700;color:#e94560">RM${o.total.toFixed(2)}</td>
+     <td style="font-size:11px;color:#aaa">${o.time}</td></tr>`
+  ).join('');
+  document.getElementById('empty-orders').style.display = orders.length ? 'none' : 'block';
+
+  if (cutoff) {
+    document.getElementById('cutoff-input').value = cutoff;
+    document.getElementById('cutoff-display').textContent = 'Cutoff: ' + new Date(cutoff).toLocaleString('en-MY');
+  }
+}
+
+function setCutoff() {
+  const v = document.getElementById('cutoff-input').value;
+  if (!v) { alert('Select a date & time.'); return; }
+  cutoff = v;
+  save();
+  document.getElementById('cutoff-display').textContent = 'Cutoff set: ' + new Date(cutoff).toLocaleString('en-MY');
+  checkStatus();
+  alert('Cutoff saved!');
+}
+
+function exportCSV() {
+  if (!orders.length) { alert('No orders to export.'); return; }
+  const header = ['#','Name','Staff ID/Branch',...PRODUCTS.map(p=>p.name),'Total (RM)','Time'];
+  const rows = orders.map(o => {
+    const qtys = PRODUCTS.map(p => { const it=o.items.find(i=>i.name===p.name); return it?it.qty:0; });
+    return [o.id, o.name, o.sid, ...qtys, o.total.toFixed(2), o.time];
+  });
+  const csv = [header,...rows].map(r=>r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = 'glo_orders_'+new Date().toISOString().split('T')[0]+'.csv';
+  a.click();
+}
+
+function clearOrders() {
+  if (!confirm('Clear ALL orders? Cannot be undone.')) return;
+  orders = []; save(); renderAdmin();
+}
+
+function toggleOpen() {
+  isOpen = !isOpen; save();
+  alert('Orders are now ' + (isOpen ? 'OPEN' : 'CLOSED'));
+  checkStatus();
+}
+
+initGrid();
+checkStatus();
+</script>
+</body>
+</html>
