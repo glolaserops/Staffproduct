@@ -296,7 +296,7 @@ let orders    = JSON.parse(localStorage.getItem('glo_orders')   || '[]');
 let cutoff    = localStorage.getItem('glo_cutoff') || '';
 let isOpen    = localStorage.getItem('glo_open') !== 'false';
 const STAFF_VERSION = '2026-05-29';
-const DEFAULT_STAFF = ["CHERYN","PAULINE","LEANNE","NICKO","ZETTY","BERNICE","WEN KHAI","CAROL","ELLIE","SUET MUN","WEE YANG","EMILY","JOLENE","CARMEN","DIANA","MIKI","SAMMI","BOW BOW","CHRISTINE","FIKA","JOASNIDA","KEYRA","ROS","SOPHIA","LIDYA","WENDY","IFFAH","MARINA","ANNA","SHA","JANET","JANIICE","APPLE","CANDISE","LILY","IRAH","FAI","TRAMY","PENNY","DR LYN"];
+const DEFAULT_STAFF = ["CHERYN","PAULINE","LEANNE","NICKO","ZETTY","BERNICE","WEN KHAI","CAROL","ELLIE","SUET MUN","WEE YANG","EMILY","JOLENE","CARMEN","DIANA","MIKI","SAMMI","BOW BOW","CHRISTINE","FIKA","JOASNIDA","KEYRA","ROS","SOPHIA","LIDYA","WENDY","IFFAH","MARINA","ANNA","SHA","DOREEN","JANET","JANIICE","APPLE","CANDISE","LILY","IRAH","FAI","TRAMY","PENNY","DR LYN"];
 let staffList = (() => {
   if (localStorage.getItem('glo_staff_ver') !== STAFF_VERSION) {
     localStorage.setItem('glo_staff', JSON.stringify(DEFAULT_STAFF));
@@ -349,8 +349,55 @@ const STAFF_CONTACTS = {
   "PENNY":     "60163444881",
   "DR LYN":    "60123230875",
 };
-let limits    = JSON.parse(localStorage.getItem('glo_limits')   || '{}');  // { name: maxValue (RM) }
-let globalLim = parseInt(localStorage.getItem('glo_global_lim') || '500');
+// ── STAFF ORDER LIMITS — edit here to update for everyone ─────────────────────
+// Any name not listed here will use DEFAULT_LIMIT below.
+const DEFAULT_LIMIT = 500;
+const STAFF_LIMITS = {
+  "CHERYN":    800,
+  "PAULINE":   800,
+  "LEANNE":    700,
+  "NICKO":     700,
+  "ZETTY":     700,
+  "BERNICE":   650,
+  "WEN KHAI":  600,
+  "CAROL":     500,
+  "ELLIE":     500,
+  "SUET MUN":  500,
+  "WEE YANG":  500,
+  "EMILY":     700,
+  "JOLENE":    650,
+  "CARMEN":    500,
+  "DIANA":     500,
+  "MIKI":      500,
+  "SAMMI":     500,
+  "BOW BOW":   650,
+  "CHRISTINE": 650,
+  "FIKA":      600,
+  "JOASNIDA":  500,
+  "KEYRA":     500,
+  "ROS":       500,
+  "SOPHIA":    500,
+  "LIDYA":     650,
+  "WENDY":     600,
+  "IFFAH":     500,
+  "MARINA":    500,
+  "ANNA":      550,
+  "SHA":       500,
+  "DOREEN":    600,
+  "JANET":     600,
+  "JANIICE":   500,
+  "APPLE":     500,
+  "CANDISE":   700,
+  "LILY":      500,
+  "IRAH":      700,
+  "FAI":       500,
+  "TRAMY":     500,
+  "PENNY":     700,
+  "DR LYN":    550,
+};
+// ─────────────────────────────────────────────────────────────────────────────
+let limits    = JSON.parse(localStorage.getItem('glo_limits')   || '{}');  // admin overrides only
+let globalLim = parseInt(localStorage.getItem('glo_global_lim') || DEFAULT_LIMIT);
 let qty       = {};
 PRODUCTS.forEach(p => qty[p.name] = 0);
 
@@ -371,7 +418,9 @@ function isClosed() {
 }
 
 function limitFor(name) {
-  return (limits[name] !== undefined) ? limits[name] : globalLim;
+  if (limits[name] !== undefined) return limits[name];          // admin override (this browser)
+  if (STAFF_LIMITS[name] !== undefined) return STAFF_LIMITS[name]; // coded limit (syncs via GitHub)
+  return globalLim;                                              // fallback default
 }
 
 function usedBy(name) {
@@ -815,14 +864,19 @@ function clearOrders() {
 
 function resetCycle() {
   if (!confirm('Reset cycle?\n\nThis will clear:\n• All orders\n• Cutoff date\n\nStaff names and budgets will be kept.')) return;
-  // Explicitly snapshot limits so they are never lost during reset
+  // Snapshot limits and globalLim BEFORE touching anything, then restore after.
+  // This guarantees limits are never lost regardless of what else changes.
   const savedLimits    = Object.assign({}, limits);
   const savedGlobalLim = globalLim;
   orders = [];
   cutoff = '';
   isOpen = true;
-  limits    = savedLimits;     // restore — budgets must not revert to default
-  globalLim = savedGlobalLim;
+  limits    = savedLimits;     // restore admin overrides
+  globalLim = savedGlobalLim;  // restore default limit
+  // Explicitly re-write limits to localStorage so they survive any future
+  // localStorage.clear() or version-bump wipe that might happen elsewhere.
+  localStorage.setItem('glo_limits',     JSON.stringify(limits));
+  localStorage.setItem('glo_global_lim', globalLim);
   localStorage.removeItem('glo_cutoff');
   save();
   document.getElementById('cutoff-input').value   = '';
