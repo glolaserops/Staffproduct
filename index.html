@@ -108,7 +108,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .btn-sm:hover{opacity:.85}
 .btn-teal{background:var(--teal);color:var(--navy)} .btn-navy{background:var(--navy);color:var(--white)}
 .btn-green{background:var(--green);color:var(--white)} .btn-danger{background:#fee2e2;color:#991b1b}
-.btn-amber{background:#fef9c3;color:#854d0e} .btn-neutral{background:var(--teal-lt);color:var(--navy)}
+.btn-neutral{background:var(--teal-lt);color:var(--navy)}
 .txt-red{color:var(--red)} .txt-navy{color:var(--navy);font-size:14px;font-weight:700}
 .txt-muted{color:var(--gray-400)} .txt-branch{color:var(--gray-600)} .txt-semi{font-weight:600}
 .txt-total{font-weight:700;color:var(--teal-dk)} .txt-time{font-size:11px;color:var(--gray-400)} .txt-items{color:var(--gray-600);font-size:12px}
@@ -116,6 +116,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .card-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
 .btn-icon{background:none;border:none;cursor:pointer;color:var(--gray-400);font-size:16px;padding:2px 4px;line-height:1;transition:color .15s}
 .btn-icon:hover{color:var(--red)}
+.btn-icon.edit:hover{color:var(--teal-dk)}
 .action-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .action-row .btn-sm{flex:1;min-width:120px;text-align:center}
 .cutoff-note{font-size:12px;color:var(--gray-400);margin-top:6px}
@@ -134,13 +135,19 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .overlay-msg{font-size:14px;color:var(--gray-400);max-width:260px;margin:0 auto 24px}
 .overlay-icon{font-size:48px;margin-bottom:16px}
 .refreshing{opacity:.5;pointer-events:none;transition:opacity .2s}
+.edit-panel{display:flex;gap:6px;padding:8px;background:var(--gray-50);border-radius:var(--radius-sm);border:1px solid var(--gray-200)}
+.edit-panel input{flex:1;padding:8px 10px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;font-family:var(--font);background:var(--white)}
+.edit-panel input:focus{border-color:var(--teal)}
+.staff-contact{font-size:11px;color:var(--gray-400);margin-top:2px}
 @media(max-width:480px){
   .app{padding:var(--space)} .header{padding:calc(var(--space)*2)} .brand-name{font-size:18px}
   .card{padding:calc(var(--space)*2.5)} .product-grid,.stats-grid{gap:var(--space)}
   .stat-num{font-size:20px} .tab-btn{padding:7px 12px;font-size:12px}
   .action-row{gap:6px} .action-row .btn-sm{font-size:12px;padding:8px 10px}
   .data-table th,.data-table td{padding:8px}
+  .edit-panel{flex-wrap:wrap}
 }
+#staff-table-body tr:nth-last-child(2) td{border-bottom:none}
 @media(max-width:340px){.product-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -270,8 +277,8 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
           </table>
         </div>
         <div class="inline-row" style="margin-top:14px">
-          <input type="text" id="new-staff-input" placeholder="Add staff name…"
-            onkeydown="if(event.key==='Enter')addStaff()" />
+          <input type="text" id="new-staff-input" placeholder="Name…" onkeydown="if(event.key==='Enter')addStaff()" />
+          <input type="text" id="new-staff-contact" placeholder="Contact (optional)" />
           <button class="btn-sm btn-navy" onclick="addStaff()">+ Add</button>
         </div>
       </div>
@@ -296,7 +303,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
           <h2 class="card-title" style="margin-bottom:0">All Orders</h2>
           <div style="display:flex;gap:8px">
             <button class="btn-sm btn-neutral" onclick="adminRefresh()">↻ Refresh</button>
-            <button class="btn-sm btn-green"   onclick="exportCSV()">⬇ CSV</button>
+            <button class="btn-sm btn-green"   onclick="exportXLSX()">⬇ XLSX</button>
           </div>
         </div>
         <div class="scroll-x">
@@ -307,9 +314,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
         </div>
         <div id="empty-orders" class="empty hidden">No orders yet.</div>
         <div class="action-row">
-          <button class="btn-sm btn-neutral" onclick="toggleOpen()">Toggle Open/Closed</button>
-          <button class="btn-sm btn-amber"   onclick="resetCycle()">Reset Cycle</button>
-          <button class="btn-sm btn-danger"  onclick="clearOrders()">Clear Orders</button>
+          <button class="btn-sm btn-danger" onclick="clearOrders()">Clear Orders</button>
         </div>
       </div>
     </div>
@@ -317,11 +322,12 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 // ── Config ────────────────────────────────────────────────────────
-const SHEET_URL = "https://script.google.com/macros/s/AKfycbz7SeHsLmMCI4_dT2X_aRRsAqcGOyB6mkVQ3Y2oMpX65dKwJyckycTeiwwxd5lB_OM/exec";
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbzthHyWarA5dLbctjQ-UQ3Bs83yL_-QdP4Qz3qDPU2ioXRTteIqFwsSZ5xZ_Bc0PLc/exec";
 
-const STAFF_CONTACTS = {
+const DEFAULT_CONTACTS = {
   "CHERYN":"60126480270","PAULINE":"60124623916","LEANNE":"60122010029","NICKO":"601111191939",
   "ZETTY":"60124630570","BERNICE":"60167428821","WEN KHAI":"60176858029","CAROL":"60126118116",
   "ELLIE":"60169008971","SUET MUN":"60102595107","WEE YANG":"601110887137","EMILY":"60182466297",
@@ -337,28 +343,27 @@ const DEFAULT_PRODUCTS = [
   {name:"Glo Clean",price:168},{name:"Glo Reveal",price:168},{name:"Glo Protect+",price:168},
   {name:"Glo Hydraglo+ Mask",price:188},{name:"Glo Hydro+",price:258},{name:"Glo Bright+",price:288},{name:"Glo Nourish",price:178},
 ];
-const DEFAULT_STAFF = Object.keys(STAFF_CONTACTS);
 
-// ── State (sourced from Sheets, never localStorage) ───────────────
-let PRODUCTS=[], staffList=[], orders=[], limits={}, globalLim=500, cutoff='', isOpen=true, adminLoggedIn=false, qty={};
+// ── State ─────────────────────────────────────────────────────────
+let PRODUCTS=[], staffList=[], orders=[], limits={}, contacts={}, globalLim=500, cutoff='', isOpen=true, adminLoggedIn=false, qty={};
 
 // ── Utilities ─────────────────────────────────────────────────────
-const el         = id  => document.getElementById(id);
-const show       = id  => { el(id).classList.remove('hidden'); };
-const hide       = id  => { el(id).classList.add('hidden'); };
-const key        = n   => n.replace(/[^a-zA-Z0-9]/g,'_');
-const isClosed   = ()  => !isOpen || (!!cutoff && new Date() > new Date(cutoff));
-const limitFor   = n   => limits[n] ?? globalLim;
-const usedBy     = n   => orders.filter(o=>o.name===n).reduce((s,o)=>s+Number(o.total),0);
-const remainFor  = n   => n ? Math.max(0,limitFor(n)-usedBy(n)) : Infinity;
-const hasMaxed   = n   => !!n && remainFor(n)<=0;
-const cartTotal  = ()  => PRODUCTS.reduce((s,p)=>s+qty[p.name]*p.price,0);
-const parseItems = t   => String(t||'').split(',').map(s=>{const m=s.trim().match(/^(.+)\s+×(\d+)$/);return m?{name:m[1].trim(),qty:+m[2]}:null;}).filter(Boolean);
-const pushConfig = async(k,v) => fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'config',key:k,value:v})}).catch(()=>{});
+const el        = id => document.getElementById(id);
+const show      = id => el(id).classList.remove('hidden');
+const hide      = id => el(id).classList.add('hidden');
+const key       = n  => n.replace(/[^a-zA-Z0-9]/g,'_');
+const isClosed  = () => !isOpen || (!!cutoff && new Date() > new Date(cutoff));
+const limitFor  = n  => limits[n] ?? globalLim;
+const usedBy    = n  => orders.filter(o=>o.name===n).reduce((s,o)=>s+Number(o.total),0);
+const remainFor = n  => n ? Math.max(0,limitFor(n)-usedBy(n)) : Infinity;
+const hasMaxed  = n  => !!n && remainFor(n)<=0;
+const cartTotal = () => PRODUCTS.reduce((s,p)=>s+qty[p.name]*p.price,0);
+const parseItems= t  => String(t||'').split(',').map(s=>{const m=s.trim().match(/^(.+)\s+×(\d+)$/);return m?{name:m[1].trim(),qty:+m[2]}:null;}).filter(Boolean);
+const pushConfig= async(k,v) => fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'config',key:k,value:v})}).catch(()=>{});
 
-// Shared save helpers — eliminate repeated render+push patterns
 const saveP = async () => { initGrid(); renderProducts(); renderAdmin(); await pushConfig('products',PRODUCTS); };
 const saveS = async () => { populateStaffDropdown(); renderAdmin(); await pushConfig('staff',staffList); };
+const saveC = async () => { await pushConfig('contacts',contacts); };
 const saveL = async () => { renderAdmin(); await pushConfig('limits',limits); };
 
 // ── Boot ──────────────────────────────────────────────────────────
@@ -366,12 +371,13 @@ async function init() {
   show('loading-overlay'); hide('error-overlay'); hide('app-content');
   try {
     const {config:c={}, orders:o=[]} = await fetch(SHEET_URL+'?action=all').then(r=>r.json());
-    PRODUCTS  = c.products?.length ? c.products  : DEFAULT_PRODUCTS.map(p=>({...p}));
-    staffList = c.staff?.length    ? c.staff     : DEFAULT_STAFF.slice();
+    PRODUCTS  = c.products?.length ? c.products : DEFAULT_PRODUCTS.map(p=>({...p}));
+    staffList = c.staff?.length    ? c.staff    : Object.keys(DEFAULT_CONTACTS);
     limits    = c.limits    || {};
     globalLim = +c.globalLim || 500;
     cutoff    = c.cutoff    || '';
     isOpen    = c.isOpen    !== false;
+    contacts  = (c.contacts && Object.keys(c.contacts).length) ? c.contacts : {...DEFAULT_CONTACTS};
     orders    = o;
     qty       = Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
     hide('loading-overlay'); show('app-content');
@@ -443,11 +449,11 @@ function changeQty(name,d) {
 
 function updateBudgetBar() {
   const bf=el('budget-bar-fill-live'); if(!bf) return;
-  const used=usedBy(el('staff-name').value), lim=limitFor(el('staff-name').value), tot=used+cartTotal();
+  const name=el('staff-name').value, used=usedBy(name), lim=limitFor(name), tot=used+cartTotal();
   const pct=Math.min(tot/lim,1)*100, warn=pct>=70, over=tot>lim;
   bf.style.cssText=`width:${pct}%;background:${over?'var(--red)':warn?'var(--amber)':'var(--green)'}`;
   const rt=el('budget-remaining-text');
-  if (rt) { rt.textContent=over?'Over by RM'+(tot-lim).toFixed(2):'RM'+Math.max(0,lim-tot).toFixed(2)+' remaining'; rt.className='budget-value '+(over?'over':warn?'warn':'ok'); }
+  if(rt){rt.textContent=over?'Over by RM'+(tot-lim).toFixed(2):'RM'+Math.max(0,lim-tot).toFixed(2)+' remaining';rt.className='budget-value '+(over?'over':warn?'warn':'ok');}
   const bx=el('budget-info-box'); if(bx) bx.className='budget-box'+(warn||over?' warn':'');
 }
 
@@ -489,7 +495,7 @@ function submitOrder() {
   if (!total) return alert('Please select at least one product.');
   if (total>remainFor(name) && !el('payment-done-cb')?.checked) return alert('Tick "Payment Done" first.');
   const items=PRODUCTS.filter(p=>qty[p.name]>0).map(p=>({name:p.name,qty:qty[p.name],price:p.price}));
-  const order={id:orders.length+1, name, contact:STAFF_CONTACTS[name]||'', sid:branch, items, total, time:new Date().toLocaleString('en-MY')};
+  const order={id:orders.length+1,name,contact:contacts[name]||'',sid:branch,items,total,time:new Date().toLocaleString('en-MY')};
   orders.push(order);
   fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'order',...order})}).catch(()=>{});
   el('success-msg').textContent=`Order #${order.id} for ${name} (${branch}) — RM ${total.toFixed(2)}`;
@@ -508,10 +514,10 @@ function resetForm() {
 
 function checkStatus() {
   const closed=isClosed();
-  el('order-form-view').style.display = closed?'none':'block';
+  el('order-form-view').style.display=closed?'none':'block';
   el('closed-view').classList.toggle('hidden',!closed);
   hide('success-view');
-  el('header-status').textContent = closed ? 'Orders CLOSED' : (cutoff?'Cutoff: '+new Date(cutoff).toLocaleString('en-MY'):'Orders OPEN');
+  el('header-status').textContent=closed?'Orders CLOSED':(cutoff?'Cutoff: '+new Date(cutoff).toLocaleString('en-MY'):'Orders OPEN');
 }
 
 // ── Admin Tab ─────────────────────────────────────────────────────
@@ -531,12 +537,26 @@ function renderAdmin() {
   el('staff-table-body').innerHTML = staffList.map(n=>{
     const used=usedBy(n), lim=limitFor(n), pct=Math.min(used/lim,1)*100, full=used>=lim;
     const bc=full?'var(--red)':pct>=70?'var(--amber)':'var(--green)';
+    const k=key(n);
     return `<tr>
-      <td class="txt-strong">${n}</td>
+      <td class="txt-strong">${n}<div class="staff-contact">${contacts[n]||'—'}</div></td>
       <td><div class="usage-wrap"><span>RM${used.toFixed(0)}</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%;background:${bc}"></div></div></div></td>
       <td><input type="number" min="1" max="99999" value="${lim}" onchange="setStaffLimit('${n}',this.value)"/></td>
       <td><span class="badge ${full?'badge-full':used>0?'badge-warn':'badge-ok'}">${full?'LIMIT HIT':used>0?`RM${used.toFixed(0)} used`:'Clear'}</span></td>
-      <td><button class="btn-icon" onclick="removeStaff('${n}')">✕</button></td>
+      <td style="white-space:nowrap">
+        <button class="btn-icon edit" title="Edit" onclick="toggleEditRow('${k}')">✎</button>
+        <button class="btn-icon" onclick="removeStaff('${n}')">✕</button>
+      </td>
+    </tr>
+    <tr id="edit-${k}" class="hidden">
+      <td colspan="5" style="padding:2px 0 10px">
+        <div class="edit-panel">
+          <input id="en-${k}" value="${n}" placeholder="Name" />
+          <input id="ec-${k}" value="${contacts[n]||''}" placeholder="Contact (60XXXXXXXXX)" />
+          <button class="btn-sm btn-teal" onclick="saveStaffEdit('${n}')">Save</button>
+          <button class="btn-sm btn-neutral" onclick="toggleEditRow('${k}')">✕</button>
+        </div>
+      </td>
     </tr>`;
   }).join('');
 
@@ -559,8 +579,8 @@ function renderAdmin() {
   </tr>`).join('');
   el('empty-orders').classList.toggle('hidden',orders.length>0);
 
-  el('cutoff-input').value = cutoff||'';
-  el('cutoff-display').textContent = cutoff ? 'Cutoff: '+new Date(cutoff).toLocaleString('en-MY') : 'No cutoff set — orders close manually.';
+  el('cutoff-input').value=cutoff||'';
+  el('cutoff-display').textContent=cutoff?'Cutoff: '+new Date(cutoff).toLocaleString('en-MY'):'No cutoff set — orders close manually.';
 }
 
 function renderProducts() {
@@ -601,14 +621,18 @@ async function updateProduct(i, field, val) {
 }
 
 async function addStaff() {
-  const inp=el('new-staff-input'), n=inp.value.trim().toUpperCase();
-  if (!n)                   return alert('Enter a staff name.');
+  const inp=el('new-staff-input'), n=inp.value.trim().toUpperCase(), c=el('new-staff-contact').value.trim();
+  if (!n)                    return alert('Enter a staff name.');
   if (staffList.includes(n)) return alert('Name already exists.');
-  staffList.push(n); inp.value=''; await saveS();
+  staffList.push(n); inp.value=''; el('new-staff-contact').value='';
+  if (c) contacts[n]=c;
+  await saveS(); if (c) await saveC();
 }
 async function removeStaff(n) {
   if (!confirm(`Remove "${n}"?`)) return;
-  staffList=staffList.filter(x=>x!==n); await saveS();
+  staffList=staffList.filter(x=>x!==n);
+  delete contacts[n]; delete limits[n];
+  await saveS(); await saveC(); await saveL();
 }
 async function setStaffLimit(n, val) {
   const v=parseInt(val);
@@ -622,6 +646,23 @@ async function saveGlobalLimit() {
   await pushConfig('globalLim',n);
 }
 
+function toggleEditRow(k) { el('edit-'+k).classList.toggle('hidden'); }
+
+async function saveStaffEdit(oldName) {
+  const k=key(oldName), newName=el('en-'+k).value.trim().toUpperCase(), newContact=el('ec-'+k).value.trim();
+  if (!newName) return alert('Name cannot be empty.');
+  if (newName!==oldName && staffList.includes(newName)) return alert('Name already exists.');
+  const idx=staffList.indexOf(oldName);
+  staffList[idx]=newName;
+  if (newName!==oldName) {
+    if (limits[oldName]!==undefined)  { limits[newName]=limits[oldName]; delete limits[oldName]; }
+    if (contacts[oldName])            { contacts[newName]=contacts[oldName]; delete contacts[oldName]; }
+  }
+  if (newContact) contacts[newName]=newContact; else delete contacts[newName];
+  await saveS(); await saveC();
+  if (newName!==oldName) await saveL();
+}
+
 async function setCutoff() {
   const v=el('cutoff-input').value;
   if (!v) return alert('Select a date & time.');
@@ -629,20 +670,9 @@ async function setCutoff() {
   await pushConfig('cutoff',cutoff);
 }
 async function clearCutoff() {
-  cutoff=''; el('cutoff-input').value='';
+  cutoff=''; isOpen=true; el('cutoff-input').value='';
   el('cutoff-display').textContent='No cutoff set — orders close manually.';
-  checkStatus(); await pushConfig('cutoff','');
-}
-async function toggleOpen() {
-  isOpen=!isOpen; checkStatus(); alert('Orders are now '+(isOpen?'OPEN':'CLOSED'));
-  await pushConfig('isOpen',isOpen);
-}
-async function resetCycle() {
-  if (!confirm('Reset cycle? Clears ALL orders, removes cutoff, re-opens ordering.\nStaff, limits and products are kept.')) return;
-  orders=[]; cutoff=''; isOpen=true; renderAdmin(); checkStatus();
-  await fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'clearOrders'})});
-  await pushConfig('cutoff',''); await pushConfig('isOpen',true);
-  alert('Cycle reset!');
+  checkStatus(); await pushConfig('cutoff',''); await pushConfig('isOpen',true);
 }
 async function clearOrders() {
   if (!confirm('Clear ALL orders from Google Sheets? Cannot be undone.')) return;
@@ -651,14 +681,16 @@ async function clearOrders() {
   alert('All orders cleared.');
 }
 
-function exportCSV() {
+function exportXLSX() {
   if (!orders.length) return alert('No orders to export.');
   const rows=[['#','Name','Branch','Items','Total (RM)','Time'],
-    ...orders.map(o=>[o.id,o.name,o.sid,(o.itemsText||(o.items||[]).map(i=>i.name+' ×'+i.qty).join('; ')).replace(/,/g,';'),Number(o.total).toFixed(2),o.time])];
-  Object.assign(document.createElement('a'),{
-    href:'data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n')),
-    download:'glo_orders_'+new Date().toISOString().split('T')[0]+'.csv'
-  }).click();
+    ...orders.map(o=>[o.id,o.name,o.sid,
+      o.itemsText||(o.items||[]).map(i=>i.name+' ×'+i.qty).join('; '),
+      Number(o.total).toFixed(2),o.time])];
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Orders');
+  XLSX.writeFile(wb,'glo_orders_'+new Date().toISOString().split('T')[0]+'.xlsx');
 }
 
 init();
