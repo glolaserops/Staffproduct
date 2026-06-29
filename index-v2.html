@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Glo Staff Ordering</title>
+<style>
+:root {
+  --navy:#13294B; --navy-dk:#0d1e37; --teal:#2AD2C9; --teal-dk:#1ab8b0; --teal-lt:#e4f9f8;
+  --green:#1a9e5c; --amber:#f5a623; --red:#e94560; --red-lt:#fff0f3;
+  --gray-50:#f8fafc; --gray-100:#f1f5f9; --gray-200:#e2e8f0;
+  --gray-400:#94a3b8; --gray-600:#475569; --gray-800:#1e293b; --white:#ffffff;
+  --radius-sm:8px; --radius:12px; --radius-lg:18px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
+  --shadow:0 4px 16px rgba(0,0,0,.08);
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif; --space:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font:inherit}
+.app{max-width:680px;margin:0 auto;padding:calc(var(--space)*2);padding-bottom:calc(var(--space)*6)}
+.header{background:var(--navy);border-radius:var(--radius-lg);padding:calc(var(--space)*3);margin-bottom:calc(var(--space)*3);display:flex;align-items:center;justify-content:space-between;gap:var(--space);box-shadow:var(--shadow)}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand-name{font-size:20px;font-weight:800;letter-spacing:.5px;color:var(--white);line-height:1.1}
+.brand-name span{color:var(--teal)}
+.brand-status{font-size:12px;color:rgba(255,255,255,.55);letter-spacing:.3px}
+.tabs{display:flex;background:rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:3px;gap:2px}
+.tab-btn{padding:7px 18px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s,color .15s;line-height:1;white-space:nowrap}
+.tab-btn.active{background:var(--teal);color:var(--navy)}
+.tab-btn.inactive{background:transparent;color:rgba(255,255,255,.6)}
+.tab-btn.inactive:hover{background:rgba(255,255,255,.12);color:var(--white)}
+.card{background:var(--white);border-radius:var(--radius-lg);padding:calc(var(--space)*3);margin-bottom:calc(var(--space)*2);box-shadow:var(--shadow-sm);border:1px solid var(--gray-200)}
+.card-title{font-size:13px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:calc(var(--space)*2.5)}
+.form-group{margin-bottom:calc(var(--space)*2)}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
+.form-control{width:100%;padding:11px 14px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font);outline:none;background:var(--white);color:var(--gray-800);transition:border-color .15s;appearance:none;-webkit-appearance:none}
+select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;cursor:pointer}
+.form-control:focus{border-color:var(--teal)}
+.budget-box{border:2px solid var(--gray-200);border-radius:var(--radius-sm);padding:12px 14px;background:var(--gray-50);margin-bottom:calc(var(--space)*2);font-size:13px}
+.budget-box.warn{border-color:var(--amber);background:#fffbf0}
+.budget-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.budget-label{font-weight:600;color:var(--navy)}
+.budget-value{font-weight:700;font-size:14px}
+.budget-value.ok{color:var(--green)} .budget-value.warn{color:var(--amber)} .budget-value.over{color:var(--red)}
+.bar-track{background:var(--gray-200);border-radius:99px;height:7px;overflow:hidden;margin-bottom:5px}
+.bar-fill{height:100%;border-radius:99px;transition:width .3s,background .3s}
+.budget-meta{color:var(--gray-400);font-size:11px}
+.limit-reached{background:var(--red-lt);border:2px solid var(--red);border-radius:var(--radius-sm);padding:12px 14px;color:#c73652;font-size:13px;font-weight:600;margin-bottom:calc(var(--space)*2)}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--space)*1.5)}
+.product-card{border:2px solid var(--gray-200);border-radius:var(--radius);padding:14px;transition:border-color .15s,background .15s}
+.product-card.selected{border-color:var(--teal);background:var(--teal-lt)}
+.product-name{font-size:13px;font-weight:700;color:var(--navy);line-height:1.3}
+.product-price{font-size:12px;color:var(--teal-dk);font-weight:700;margin-top:2px}
+.qty-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.qty-btn{width:32px;height:32px;border-radius:7px;border:none;background:var(--teal);color:var(--navy);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s,transform .1s;flex-shrink:0}
+.qty-btn:hover:not(:disabled){background:var(--teal-dk);transform:scale(1.05)}
+.qty-btn:disabled{background:var(--gray-200);color:var(--gray-400);cursor:not-allowed}
+.qty-display{font-size:15px;font-weight:700;min-width:24px;text-align:center;color:var(--navy)}
+.summary-line{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid var(--gray-100);color:var(--gray-600)}
+.summary-line:last-child{border-bottom:none}
+.summary-total{display:flex;justify-content:space-between;padding:12px 0 0;margin-top:4px;font-size:16px;font-weight:800;color:var(--navy);border-top:2px solid var(--gray-200)}
+.excess-box{background:#fffbf0;border:2px solid var(--amber);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:calc(var(--space)*2)}
+.excess-title{font-size:13px;font-weight:700;color:#d97706;margin-bottom:10px}
+.excess-row{display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);margin-bottom:5px}
+.excess-note{font-size:11px;color:var(--gray-400);font-style:italic;margin-bottom:12px}
+.payment-check{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--navy)}
+.payment-check input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);cursor:pointer}
+.after-order-note{font-size:12px;text-align:right;margin-bottom:8px;color:var(--gray-400)}
+.btn-primary{width:100%;padding:15px;background:linear-gradient(135deg,var(--teal),var(--teal-dk));color:var(--navy);border:none;border-radius:var(--radius);font-size:15px;font-weight:800;cursor:pointer;letter-spacing:.3px;transition:opacity .15s,transform .1s;box-shadow:0 4px 12px rgba(42,210,201,.3)}
+.btn-primary:hover:not(:disabled){opacity:.92;transform:translateY(-1px)}
+.btn-primary:disabled{background:var(--gray-200);color:var(--gray-400);cursor:not-allowed;box-shadow:none}
+.btn-secondary{padding:10px 24px;background:var(--gray-100);color:var(--navy);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
+.btn-secondary:hover{background:var(--gray-200)}
+.state-screen{text-align:center;padding:calc(var(--space)*5) calc(var(--space)*2)}
+.state-icon{font-size:52px;margin-bottom:16px;line-height:1}
+.state-title{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.state-msg{font-size:14px;color:var(--gray-400);max-width:280px;margin:0 auto 24px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--space)*1.5);margin-bottom:calc(var(--space)*2)}
+.stat-card{background:var(--navy);border-radius:var(--radius);padding:calc(var(--space)*2) calc(var(--space)*1.5);text-align:center}
+.stat-num{font-size:24px;font-weight:800;color:var(--teal);line-height:1.1}
+.stat-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.data-table{width:100%;border-collapse:collapse;font-size:13px}
+.data-table th{background:var(--gray-50);padding:9px 10px;text-align:left;font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gray-200)}
+.data-table td{padding:9px 10px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);vertical-align:middle}
+.data-table tr:last-child td{border-bottom:none}
+.data-table input[type=number],.data-table input[type=text]{padding:5px 8px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;background-image:none;font-family:var(--font)}
+.data-table input[type=number]{width:80px;text-align:center}
+.data-table input:focus{border-color:var(--teal)}
+.usage-wrap{display:inline-flex;align-items:center;gap:8px}
+.mini-bar-track{background:var(--gray-200);border-radius:99px;height:5px;width:56px;overflow:hidden;flex-shrink:0}
+.mini-bar-fill{height:100%;border-radius:99px}
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:700;letter-spacing:.2px;white-space:nowrap}
+.badge-ok{background:#dcfce7;color:#166534} .badge-warn{background:#fef9c3;color:#854d0e} .badge-full{background:#fee2e2;color:#991b1b}
+.prod-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-100);gap:12px}
+.prod-row:last-child{border-bottom:none}
+.prod-info{flex:1;min-width:0}
+.prod-row-name{font-weight:700;color:var(--navy);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-bar-track{background:var(--gray-100);border-radius:99px;height:5px;margin-top:5px;overflow:hidden}
+.prod-bar-fill{background:var(--teal);height:100%;border-radius:99px}
+.prod-units{font-size:14px;font-weight:800;color:var(--teal-dk);white-space:nowrap}
+.inline-row{display:flex;gap:8px;align-items:center}
+.inline-row input{flex:1;padding:10px 12px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;background-image:none;font-family:var(--font)}
+.inline-row input:focus{border-color:var(--teal)}
+.inline-row .lbl{font-size:13px;font-weight:600;color:var(--gray-600);white-space:nowrap}
+.btn-sm{padding:9px 16px;border-radius:var(--radius-sm);border:none;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.btn-sm:hover{opacity:.85}
+.btn-teal{background:var(--teal);color:var(--navy)} .btn-navy{background:var(--navy);color:var(--white)}
+.btn-green{background:var(--green);color:var(--white)} .btn-danger{background:#fee2e2;color:#991b1b}
+.btn-amber{background:#fef9c3;color:#854d0e} .btn-neutral{background:var(--teal-lt);color:var(--navy)}
+.txt-red{color:var(--red)} .txt-navy{color:var(--navy);font-size:14px;font-weight:700}
+.txt-muted{color:var(--gray-400)} .txt-branch{color:var(--gray-600)} .txt-semi{font-weight:600}
+.txt-total{font-weight:700;color:var(--teal-dk)} .txt-time{font-size:11px;color:var(--gray-400)} .txt-items{color:var(--gray-600);font-size:12px}
+.txt-strong{font-weight:700} .prod-price-dim{color:var(--gray-400);font-weight:400}
+.card-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.btn-icon{background:none;border:none;cursor:pointer;color:var(--gray-400);font-size:16px;padding:2px 4px;line-height:1;transition:color .15s}
+.btn-icon:hover{color:var(--red)}
+.action-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.action-row .btn-sm{flex:1;min-width:120px;text-align:center}
+.cutoff-note{font-size:12px;color:var(--gray-400);margin-top:6px}
+.login-wrap{max-width:320px;margin:0 auto;padding:calc(var(--space)*5) 0;text-align:center}
+.login-title{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px}
+.login-sub{font-size:13px;color:var(--gray-400);margin-bottom:24px}
+.login-wrap .form-control{text-align:center;letter-spacing:2px;margin-bottom:12px}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.empty{text-align:center;padding:calc(var(--space)*4) 0;color:var(--gray-400);font-size:14px}
+.hidden{display:none!important}
+.overlay{position:fixed;inset:0;background:var(--gray-50);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;text-align:center;padding:24px}
+.spinner{width:40px;height:40px;border:3px solid var(--gray-200);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.overlay-text{font-size:14px;color:var(--gray-400);font-weight:500}
+.overlay-title{font-size:20px;font-weight:800;color:var(--navy);margin-bottom:8px}
+.overlay-msg{font-size:14px;color:var(--gray-400);max-width:260px;margin:0 auto 24px}
+.overlay-icon{font-size:48px;margin-bottom:16px}
+.refreshing{opacity:.5;pointer-events:none;transition:opacity .2s}
+@media(max-width:480px){
+  .app{padding:var(--space)} .header{padding:calc(var(--space)*2)} .brand-name{font-size:18px}
+  .card{padding:calc(var(--space)*2.5)} .product-grid,.stats-grid{gap:var(--space)}
+  .stat-num{font-size:20px} .tab-btn{padding:7px 12px;font-size:12px}
+  .action-row{gap:6px} .action-row .btn-sm{font-size:12px;padding:8px 10px}
+  .data-table th,.data-table td{padding:8px}
+}
+@media(max-width:340px){.product-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div id="loading-overlay" class="overlay">
+  <div class="spinner"></div>
+  <div class="overlay-text">Loading GLO Ordering…</div>
+</div>
+
+<div id="error-overlay" class="overlay hidden">
+  <div class="overlay-icon">⚠️</div>
+  <div class="overlay-title">Could not connect</div>
+  <p class="overlay-msg">Unable to load app data. Check your connection and try again.</p>
+  <button class="btn-primary" style="max-width:180px" onclick="init()">Retry</button>
+</div>
+
+<div class="app hidden" id="app-content">
+
+  <header class="header">
+    <div class="brand">
+      <h1 class="brand-name">✦ <span>GLO</span> Ordering</h1>
+      <div class="brand-status" id="header-status">Staff Order Portal</div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active"   role="tab" aria-selected="true"  onclick="switchTab('staff')">Order</button>
+      <button class="tab-btn inactive" role="tab" aria-selected="false" onclick="switchTab('admin')">Admin</button>
+    </nav>
+  </header>
+
+  <!-- STAFF TAB -->
+  <div id="tab-staff">
+    <div id="order-form-view">
+      <div class="card">
+        <h2 class="card-title">Your Details</h2>
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <select class="form-control" id="staff-name" onchange="onStaffChange()">
+            <option value="">— Select your name —</option>
+          </select>
+        </div>
+        <div id="limit-status-msg"></div>
+        <div class="form-group">
+          <label class="form-label">Branch</label>
+          <select class="form-control" id="staff-branch">
+            <option value="">— Select branch —</option>
+            <option>Mid Valley (MV)</option><option>KLCC</option>
+            <option>Bangsar Village 2 (BV)</option><option>Plaza Arkadia (AK)</option>
+            <option>Leisure Mall (LM)</option><option>Sogo KL (SG)</option>
+            <option>One Utama (OU)</option><option>Sunway Pyramid (SP)</option>
+            <option>The Glo Clinic BV (GC)</option><option>The Glo Clinic Avenue K (AVK)</option>
+            <option>HQ</option>
+          </select>
+        </div>
+      </div>
+      <div class="card">
+        <h2 class="card-title">Select Products</h2>
+        <div class="product-grid" id="product-grid"></div>
+      </div>
+      <div class="card hidden" id="summary-card">
+        <h2 class="card-title">Order Summary</h2>
+        <div id="summary-lines"></div>
+        <div class="summary-total"><span>Total</span><span id="summary-total-val">RM 0.00</span></div>
+      </div>
+      <div id="excess-payment-section"></div>
+      <button class="btn-primary" id="submit-btn" onclick="submitOrder()">Submit Order</button>
+    </div>
+
+    <div id="success-view" class="hidden">
+      <div class="card"><div class="state-screen">
+        <div class="state-icon">✅</div>
+        <div class="state-title">Order Submitted!</div>
+        <p class="state-msg" id="success-msg"></p>
+        <button class="btn-secondary" onclick="resetForm()">Place Another Order</button>
+      </div></div>
+    </div>
+
+    <div id="closed-view" class="hidden">
+      <div class="card"><div class="state-screen">
+        <div class="state-icon">🔒</div>
+        <div class="state-title">Orders Closed</div>
+        <p class="state-msg">The ordering window has ended. Please contact your admin.</p>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ADMIN TAB -->
+  <div id="tab-admin" class="hidden">
+    <div id="admin-login-view">
+      <div class="card"><div class="login-wrap">
+        <div class="login-title">Admin Access</div>
+        <p class="login-sub">Enter your password to continue</p>
+        <input type="password" class="form-control" id="admin-pw" placeholder="Password"
+          onkeydown="if(event.key==='Enter')adminLogin()" />
+        <button class="btn-primary" onclick="adminLogin()">Login</button>
+      </div></div>
+    </div>
+
+    <div id="admin-dashboard" class="hidden">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num" id="stat-orders">0</div><div class="stat-label">Orders</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-items">0</div><div class="stat-label">Items</div></div>
+        <div class="stat-card"><div class="stat-num" id="stat-rev">RM0</div><div class="stat-label">Value</div></div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Order Cutoff</h2>
+        <div class="inline-row">
+          <input type="datetime-local" id="cutoff-input" />
+          <button class="btn-sm btn-teal" onclick="setCutoff()">Set</button>
+          <button class="btn-sm btn-neutral" onclick="clearCutoff()">Clear</button>
+        </div>
+        <p class="cutoff-note" id="cutoff-display"></p>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Staff &amp; Limits</h2>
+        <div class="inline-row" style="margin-bottom:16px">
+          <span class="lbl">Default limit (RM):</span>
+          <input type="number" id="global-limit-input" min="1" max="99999" value="500" style="max-width:110px" />
+          <button class="btn-sm btn-teal" onclick="saveGlobalLimit()">Save</button>
+        </div>
+        <div class="scroll-x">
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Used / Limit</th><th>Limit (RM)</th><th>Status</th><th></th></tr></thead>
+            <tbody id="staff-table-body"></tbody>
+          </table>
+        </div>
+        <div class="inline-row" style="margin-top:14px">
+          <input type="text" id="new-staff-input" placeholder="Add staff name…"
+            onkeydown="if(event.key==='Enter')addStaff()" />
+          <button class="btn-sm btn-navy" onclick="addStaff()">+ Add</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Products</h2>
+        <div id="products-list"></div>
+        <div class="inline-row" style="margin-top:14px">
+          <input type="text"   id="new-prod-name"  placeholder="Product name…" style="flex:2" />
+          <input type="number" id="new-prod-price" placeholder="Price (RM)" min="1" style="flex:1;max-width:110px" />
+          <button class="btn-sm btn-navy" onclick="addProduct()">+ Add</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="card-title">Product Summary</h2>
+        <div id="prod-summary"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header-row">
+          <h2 class="card-title" style="margin-bottom:0">All Orders</h2>
+          <div style="display:flex;gap:8px">
+            <button class="btn-sm btn-neutral" onclick="adminRefresh()">↻ Refresh</button>
+            <button class="btn-sm btn-green"   onclick="exportCSV()">⬇ CSV</button>
+          </div>
+        </div>
+        <div class="scroll-x">
+          <table class="data-table">
+            <thead><tr><th>#</th><th>Name</th><th>Branch</th><th>Items</th><th>Total</th><th>Time</th></tr></thead>
+            <tbody id="orders-body"></tbody>
+          </table>
+        </div>
+        <div id="empty-orders" class="empty hidden">No orders yet.</div>
+        <div class="action-row">
+          <button class="btn-sm btn-neutral" onclick="toggleOpen()">Toggle Open/Closed</button>
+          <button class="btn-sm btn-amber"   onclick="resetCycle()">Reset Cycle</button>
+          <button class="btn-sm btn-danger"  onclick="clearOrders()">Clear Orders</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── Config ────────────────────────────────────────────────────────
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbz7SeHsLmMCI4_dT2X_aRRsAqcGOyB6mkVQ3Y2oMpX65dKwJyckycTeiwwxd5lB_OM/exec";
+
+const STAFF_CONTACTS = {
+  "CHERYN":"60126480270","PAULINE":"60124623916","LEANNE":"60122010029","NICKO":"601111191939",
+  "ZETTY":"60124630570","BERNICE":"60167428821","WEN KHAI":"60176858029","CAROL":"60126118116",
+  "ELLIE":"60169008971","SUET MUN":"60102595107","WEE YANG":"601110887137","EMILY":"60182466297",
+  "JOLENE":"60169282916","CARMEN":"60183500367","DIANA":"60127197276","MIKI":"601119936868",
+  "SAMMI":"60196001413","BOW BOW":"60169264110","CHRISTINE":"60169172882","FIKA":"60154678930",
+  "JOASNIDA":"601112481107","KEYRA":"61139874355","ROS":"6089765611","SOPHIA":"60183658900",
+  "LIDYA":"60192391334","WENDY":"601118714557","IFFAH":"60182983150","MARINA":"601121559620",
+  "ANNA":"60166000708","SHA":"60188715547","JANET":"60124151075","JANIICE":"60145192429",
+  "APPLE":"60168195029","CANDISE":"601123226384","LILY":"60178565089","IRAH":"60176356120",
+  "FAI":"601121778372","TRAMY":"60126834343","PENNY":"60163444881","DR LYN":"60123230875",
+};
+const DEFAULT_PRODUCTS = [
+  {name:"Glo Clean",price:168},{name:"Glo Reveal",price:168},{name:"Glo Protect+",price:168},
+  {name:"Glo Hydraglo+ Mask",price:188},{name:"Glo Hydro+",price:258},{name:"Glo Bright+",price:288},{name:"Glo Nourish",price:178},
+];
+const DEFAULT_STAFF = Object.keys(STAFF_CONTACTS);
+
+// ── State (sourced from Sheets, never localStorage) ───────────────
+let PRODUCTS=[], staffList=[], orders=[], limits={}, globalLim=500, cutoff='', isOpen=true, adminLoggedIn=false, qty={};
+
+// ── Utilities ─────────────────────────────────────────────────────
+const el         = id  => document.getElementById(id);
+const show       = id  => { el(id).classList.remove('hidden'); };
+const hide       = id  => { el(id).classList.add('hidden'); };
+const key        = n   => n.replace(/[^a-zA-Z0-9]/g,'_');
+const isClosed   = ()  => !isOpen || (!!cutoff && new Date() > new Date(cutoff));
+const limitFor   = n   => limits[n] ?? globalLim;
+const usedBy     = n   => orders.filter(o=>o.name===n).reduce((s,o)=>s+Number(o.total),0);
+const remainFor  = n   => n ? Math.max(0,limitFor(n)-usedBy(n)) : Infinity;
+const hasMaxed   = n   => !!n && remainFor(n)<=0;
+const cartTotal  = ()  => PRODUCTS.reduce((s,p)=>s+qty[p.name]*p.price,0);
+const parseItems = t   => String(t||'').split(',').map(s=>{const m=s.trim().match(/^(.+)\s+×(\d+)$/);return m?{name:m[1].trim(),qty:+m[2]}:null;}).filter(Boolean);
+const pushConfig = async(k,v) => fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'config',key:k,value:v})}).catch(()=>{});
+
+// Shared save helpers — eliminate repeated render+push patterns
+const saveP = async () => { initGrid(); renderProducts(); renderAdmin(); await pushConfig('products',PRODUCTS); };
+const saveS = async () => { populateStaffDropdown(); renderAdmin(); await pushConfig('staff',staffList); };
+const saveL = async () => { renderAdmin(); await pushConfig('limits',limits); };
+
+// ── Boot ──────────────────────────────────────────────────────────
+async function init() {
+  show('loading-overlay'); hide('error-overlay'); hide('app-content');
+  try {
+    const {config:c={}, orders:o=[]} = await fetch(SHEET_URL+'?action=all').then(r=>r.json());
+    PRODUCTS  = c.products?.length ? c.products  : DEFAULT_PRODUCTS.map(p=>({...p}));
+    staffList = c.staff?.length    ? c.staff     : DEFAULT_STAFF.slice();
+    limits    = c.limits    || {};
+    globalLim = +c.globalLim || 500;
+    cutoff    = c.cutoff    || '';
+    isOpen    = c.isOpen    !== false;
+    orders    = o;
+    qty       = Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
+    hide('loading-overlay'); show('app-content');
+    populateStaffDropdown(); initGrid(); checkStatus();
+  } catch { hide('loading-overlay'); show('error-overlay'); }
+}
+
+async function refreshOrders() {
+  try { const d=await fetch(SHEET_URL+'?action=orders').then(r=>r.json()); if(d.orders) orders=d.orders; } catch{}
+}
+async function adminRefresh() {
+  el('admin-dashboard').classList.add('refreshing');
+  await refreshOrders(); renderAdmin();
+  el('admin-dashboard').classList.remove('refreshing');
+}
+
+// ── Navigation ────────────────────────────────────────────────────
+function switchTab(tab) {
+  ['staff','admin'].forEach(t=>el('tab-'+t).classList.toggle('hidden',t!==tab));
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    const a=(i===0)===(tab==='staff'); b.className='tab-btn '+(a?'active':'inactive'); b.setAttribute('aria-selected',a);
+  });
+  if (tab==='staff') checkStatus();
+  if (tab==='admin' && adminLoggedIn) adminRefresh();
+}
+
+// ── Staff Tab ─────────────────────────────────────────────────────
+function populateStaffDropdown() {
+  const s=el('staff-name'), prev=s.value;
+  s.innerHTML='<option value="">— Select your name —</option>'+staffList.map(n=>`<option>${n}</option>`).join('');
+  if (prev) s.value=prev;
+}
+
+function onStaffChange() {
+  const name=el('staff-name').value, msg=el('limit-status-msg');
+  if (!name) { msg.innerHTML=''; updateSummary(); return; }
+  const used=usedBy(name), lim=limitFor(name), rem=Math.max(0,lim-used);
+  const pct=Math.min(used/lim,1)*100, warn=pct>=70, full=used>=lim;
+  msg.innerHTML = full
+    ? `<div class="limit-reached">⛔ ${name} has reached the order limit (RM${used.toFixed(2)} / RM${lim.toFixed(2)}). Contact admin.</div>`
+    : `<div class="budget-box${warn?' warn':''}" id="budget-info-box">
+        <div class="budget-header"><span class="budget-label">Ordering budget</span>
+          <span class="budget-value ${warn?'warn':'ok'}" id="budget-remaining-text">RM${rem.toFixed(2)} remaining</span></div>
+        <div class="bar-track"><div class="bar-fill" id="budget-bar-fill-live" style="width:${pct}%;background:${warn?'var(--amber)':'var(--green)'}"></div></div>
+        <div class="budget-meta">Used RM${used.toFixed(2)} of RM${lim.toFixed(2)}</div></div>`;
+  el('submit-btn').disabled = full;
+  updateSummary();
+}
+
+function initGrid() {
+  qty = Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
+  el('product-grid').innerHTML = PRODUCTS.map(p=>`
+    <div class="product-card" id="pc-${key(p.name)}">
+      <div class="product-name">${p.name}</div>
+      <div class="product-price">RM ${p.price}</div>
+      <div class="qty-row">
+        <button class="qty-btn" onclick="changeQty('${p.name}',-1)">−</button>
+        <span class="qty-display" id="q-${key(p.name)}">0</span>
+        <button class="qty-btn" onclick="changeQty('${p.name}',1)">+</button>
+      </div></div>`).join('');
+}
+
+function changeQty(name,d) {
+  qty[name] = Math.max(0,qty[name]+d);
+  el('q-'+key(name)).textContent = qty[name];
+  el('pc-'+key(name)).classList.toggle('selected',qty[name]>0);
+  updateSummary();
+}
+
+function updateBudgetBar() {
+  const bf=el('budget-bar-fill-live'); if(!bf) return;
+  const used=usedBy(el('staff-name').value), lim=limitFor(el('staff-name').value), tot=used+cartTotal();
+  const pct=Math.min(tot/lim,1)*100, warn=pct>=70, over=tot>lim;
+  bf.style.cssText=`width:${pct}%;background:${over?'var(--red)':warn?'var(--amber)':'var(--green)'}`;
+  const rt=el('budget-remaining-text');
+  if (rt) { rt.textContent=over?'Over by RM'+(tot-lim).toFixed(2):'RM'+Math.max(0,lim-tot).toFixed(2)+' remaining'; rt.className='budget-value '+(over?'over':warn?'warn':'ok'); }
+  const bx=el('budget-info-box'); if(bx) bx.className='budget-box'+(warn||over?' warn':'');
+}
+
+function updateSummary() {
+  const sel=PRODUCTS.filter(p=>qty[p.name]>0), sc=el('summary-card'), ex=el('excess-payment-section'), btn=el('submit-btn');
+  if (!sel.length) { sc.classList.add('hidden'); ex.innerHTML=''; btn.disabled=false; updateBudgetBar(); return; }
+  const total=sel.reduce((s,p)=>s+qty[p.name]*p.price,0);
+  sc.classList.remove('hidden');
+  el('summary-lines').innerHTML = sel.map(p=>`<div class="summary-line"><span>${p.name} × ${qty[p.name]}</span><span>RM ${(p.price*qty[p.name]).toFixed(2)}</span></div>`).join('');
+  el('summary-total-val').textContent = 'RM '+total.toFixed(2);
+  const name=el('staff-name').value;
+  if (name) {
+    const rem=remainFor(name);
+    if (total>rem) {
+      const excess=total-rem;
+      ex.innerHTML=`<div class="excess-box">
+        <div class="excess-title">⚠️ Excess Order Amount</div>
+        <div class="excess-row"><span>Cart exceeds budget by:</span><strong class="txt-red">RM${excess.toFixed(2)}</strong></div>
+        <div class="excess-row"><span>Amount to pay (÷ 2):</span><strong class="txt-navy">RM${(excess/2).toFixed(2)}</strong></div>
+        <div class="excess-note">Pay to company, receipt send to Khai</div>
+        <label class="payment-check"><input type="checkbox" id="payment-done-cb" onchange="el('submit-btn').disabled=!this.checked"/> Payment Done ✓</label>
+      </div>`;
+      btn.disabled=true;
+    } else {
+      ex.innerHTML=`<div class="after-order-note">After this order: <strong style="color:${rem-total<50?'var(--amber)':'var(--green)'}">RM${(rem-total).toFixed(2)} left</strong></div>`;
+      btn.disabled=false;
+    }
+  } else { ex.innerHTML=''; btn.disabled=false; }
+  updateBudgetBar();
+}
+
+function submitOrder() {
+  if (isClosed()) return alert('Orders are currently closed.');
+  const name=el('staff-name').value, branch=el('staff-branch').value;
+  if (!name)   return alert('Please select your name.');
+  if (!branch) return alert('Please select your branch.');
+  if (hasMaxed(name)) return alert(`Order limit reached for ${name}. Contact admin.`);
+  const total=cartTotal();
+  if (!total) return alert('Please select at least one product.');
+  if (total>remainFor(name) && !el('payment-done-cb')?.checked) return alert('Tick "Payment Done" first.');
+  const items=PRODUCTS.filter(p=>qty[p.name]>0).map(p=>({name:p.name,qty:qty[p.name],price:p.price}));
+  const order={id:orders.length+1, name, contact:STAFF_CONTACTS[name]||'', sid:branch, items, total, time:new Date().toLocaleString('en-MY')};
+  orders.push(order);
+  fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'order',...order})}).catch(()=>{});
+  el('success-msg').textContent=`Order #${order.id} for ${name} (${branch}) — RM ${total.toFixed(2)}`;
+  el('order-form-view').style.display='none';
+  show('success-view');
+}
+
+function resetForm() {
+  qty=Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
+  ['staff-name','staff-branch'].forEach(id=>el(id).value='');
+  ['limit-status-msg','excess-payment-section'].forEach(id=>el(id).innerHTML='');
+  hide('summary-card'); hide('success-view');
+  el('order-form-view').style.display='block';
+  initGrid(); checkStatus();
+}
+
+function checkStatus() {
+  const closed=isClosed();
+  el('order-form-view').style.display = closed?'none':'block';
+  el('closed-view').classList.toggle('hidden',!closed);
+  hide('success-view');
+  el('header-status').textContent = closed ? 'Orders CLOSED' : (cutoff?'Cutoff: '+new Date(cutoff).toLocaleString('en-MY'):'Orders OPEN');
+}
+
+// ── Admin Tab ─────────────────────────────────────────────────────
+async function adminLogin() {
+  if (el('admin-pw').value !== 'getgloing1234') return alert('Wrong password.');
+  adminLoggedIn=true; hide('admin-login-view'); show('admin-dashboard');
+  await refreshOrders(); renderAdmin();
+}
+
+function renderAdmin() {
+  el('stat-orders').textContent = orders.length;
+  el('stat-items').textContent  = orders.reduce((s,o)=>s+(o.items||parseItems(o.itemsText)).reduce((a,i)=>a+Number(i.qty),0),0);
+  el('stat-rev').textContent    = 'RM'+orders.reduce((s,o)=>s+Number(o.total),0).toFixed(0);
+  el('global-limit-input').value = globalLim;
+  renderProducts();
+
+  el('staff-table-body').innerHTML = staffList.map(n=>{
+    const used=usedBy(n), lim=limitFor(n), pct=Math.min(used/lim,1)*100, full=used>=lim;
+    const bc=full?'var(--red)':pct>=70?'var(--amber)':'var(--green)';
+    return `<tr>
+      <td class="txt-strong">${n}</td>
+      <td><div class="usage-wrap"><span>RM${used.toFixed(0)}</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%;background:${bc}"></div></div></div></td>
+      <td><input type="number" min="1" max="99999" value="${lim}" onchange="setStaffLimit('${n}',this.value)"/></td>
+      <td><span class="badge ${full?'badge-full':used>0?'badge-warn':'badge-ok'}">${full?'LIMIT HIT':used>0?`RM${used.toFixed(0)} used`:'Clear'}</span></td>
+      <td><button class="btn-icon" onclick="removeStaff('${n}')">✕</button></td>
+    </tr>`;
+  }).join('');
+
+  const pt=Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
+  orders.forEach(o=>(o.items||parseItems(o.itemsText)).forEach(i=>{ if(i.name in pt) pt[i.name]+=Number(i.qty); }));
+  const maxQ=Math.max(...Object.values(pt),1);
+  el('prod-summary').innerHTML = PRODUCTS.map(p=>`
+    <div class="prod-row">
+      <div class="prod-info">
+        <div class="prod-row-name">${p.name} <span class="prod-price-dim">· RM${p.price}</span></div>
+        <div class="prod-bar-track"><div class="prod-bar-fill" style="width:${(pt[p.name]/maxQ)*100}%"></div></div>
+      </div>
+      <div class="prod-units">${pt[p.name]} units</div>
+    </div>`).join('');
+
+  el('orders-body').innerHTML = orders.map(o=>`<tr>
+    <td class="txt-muted">#${o.id}</td><td class="txt-semi">${o.name}</td><td class="txt-branch">${o.sid}</td>
+    <td class="txt-items">${o.itemsText||(o.items||[]).map(i=>i.name+' ×'+i.qty).join(', ')}</td>
+    <td class="txt-total">RM${Number(o.total).toFixed(2)}</td><td class="txt-time">${o.time}</td>
+  </tr>`).join('');
+  el('empty-orders').classList.toggle('hidden',orders.length>0);
+
+  el('cutoff-input').value = cutoff||'';
+  el('cutoff-display').textContent = cutoff ? 'Cutoff: '+new Date(cutoff).toLocaleString('en-MY') : 'No cutoff set — orders close manually.';
+}
+
+function renderProducts() {
+  el('products-list').innerHTML = PRODUCTS.length
+    ? `<div class="scroll-x"><table class="data-table"><thead><tr><th>Name</th><th>Price (RM)</th><th></th></tr></thead><tbody>
+        ${PRODUCTS.map((p,i)=>`<tr>
+          <td><input type="text"   value="${p.name}"  onchange="updateProduct(${i},'name',this.value)"/></td>
+          <td><input type="number" value="${p.price}" onchange="updateProduct(${i},'price',this.value)" min="1"/></td>
+          <td><button class="btn-icon" onclick="removeProduct(${i})">✕</button></td>
+        </tr>`).join('')}</tbody></table></div>`
+    : '<div class="empty">No products. Add one below.</div>';
+}
+
+async function addProduct() {
+  const ne=el('new-prod-name'), n=ne.value.trim(), p=parseInt(el('new-prod-price').value);
+  if (!n)                            return alert('Enter a product name.');
+  if (PRODUCTS.find(x=>x.name===n)) return alert('Product already exists.');
+  if (isNaN(p)||p<1)                 return alert('Enter a valid price.');
+  PRODUCTS.push({name:n,price:p}); qty[n]=0; ne.value=''; el('new-prod-price').value='';
+  await saveP();
+}
+async function removeProduct(i) {
+  if (!confirm(`Remove "${PRODUCTS[i].name}"?`)) return;
+  delete qty[PRODUCTS[i].name]; PRODUCTS.splice(i,1); await saveP();
+}
+async function updateProduct(i, field, val) {
+  if (field==='name') {
+    const n=val.trim();
+    if (!n) { renderProducts(); return alert('Name cannot be empty.'); }
+    if (n!==PRODUCTS[i].name && PRODUCTS.find(p=>p.name===n)) { renderProducts(); return alert('Name already exists.'); }
+    qty[n]=qty[PRODUCTS[i].name]||0; delete qty[PRODUCTS[i].name]; PRODUCTS[i].name=n;
+  } else {
+    const p=parseInt(val);
+    if (isNaN(p)||p<1) { renderProducts(); return alert('Price must be at least RM 1.'); }
+    PRODUCTS[i].price=p;
+  }
+  await saveP();
+}
+
+async function addStaff() {
+  const inp=el('new-staff-input'), n=inp.value.trim().toUpperCase();
+  if (!n)                   return alert('Enter a staff name.');
+  if (staffList.includes(n)) return alert('Name already exists.');
+  staffList.push(n); inp.value=''; await saveS();
+}
+async function removeStaff(n) {
+  if (!confirm(`Remove "${n}"?`)) return;
+  staffList=staffList.filter(x=>x!==n); await saveS();
+}
+async function setStaffLimit(n, val) {
+  const v=parseInt(val);
+  if (isNaN(v)||v<1) return alert('Limit must be at least RM 1.');
+  limits[n]=v; await saveL();
+}
+async function saveGlobalLimit() {
+  const n=parseInt(el('global-limit-input').value);
+  if (isNaN(n)||n<1) return alert('Default limit must be at least RM 1.');
+  globalLim=n; renderAdmin(); alert('Default limit saved: RM'+n+' per staff.');
+  await pushConfig('globalLim',n);
+}
+
+async function setCutoff() {
+  const v=el('cutoff-input').value;
+  if (!v) return alert('Select a date & time.');
+  cutoff=v; checkStatus(); alert('Cutoff saved! Reflects on all devices on next load.');
+  await pushConfig('cutoff',cutoff);
+}
+async function clearCutoff() {
+  cutoff=''; el('cutoff-input').value='';
+  el('cutoff-display').textContent='No cutoff set — orders close manually.';
+  checkStatus(); await pushConfig('cutoff','');
+}
+async function toggleOpen() {
+  isOpen=!isOpen; checkStatus(); alert('Orders are now '+(isOpen?'OPEN':'CLOSED'));
+  await pushConfig('isOpen',isOpen);
+}
+async function resetCycle() {
+  if (!confirm('Reset cycle? Clears ALL orders, removes cutoff, re-opens ordering.\nStaff, limits and products are kept.')) return;
+  orders=[]; cutoff=''; isOpen=true; renderAdmin(); checkStatus();
+  await fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'clearOrders'})});
+  await pushConfig('cutoff',''); await pushConfig('isOpen',true);
+  alert('Cycle reset!');
+}
+async function clearOrders() {
+  if (!confirm('Clear ALL orders from Google Sheets? Cannot be undone.')) return;
+  orders=[]; renderAdmin();
+  await fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'clearOrders'})});
+  alert('All orders cleared.');
+}
+
+function exportCSV() {
+  if (!orders.length) return alert('No orders to export.');
+  const rows=[['#','Name','Branch','Items','Total (RM)','Time'],
+    ...orders.map(o=>[o.id,o.name,o.sid,(o.itemsText||(o.items||[]).map(i=>i.name+' ×'+i.qty).join('; ')).replace(/,/g,';'),Number(o.total).toFixed(2),o.time])];
+  Object.assign(document.createElement('a'),{
+    href:'data:text/csv;charset=utf-8,'+encodeURIComponent(rows.map(r=>r.join(',')).join('\n')),
+    download:'glo_orders_'+new Date().toISOString().split('T')[0]+'.csv'
+  }).click();
+}
+
+init();
+</script>
+</body>
+</html>
