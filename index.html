@@ -13,32 +13,32 @@
   --radius-sm:8px; --radius:12px; --radius-lg:18px;
   --shadow-sm:0 1px 3px rgba(0,0,0,.06),0 1px 2px rgba(0,0,0,.04);
   --shadow:0 4px 16px rgba(0,0,0,.08);
-  --font:'Segoe UI',system-ui,-apple-system,sans-serif; --space:8px;
+  --font:'Segoe UI',system-ui,-apple-system,sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-text-size-adjust:100%}
 body{font-family:var(--font);background:var(--gray-50);color:var(--gray-800);min-height:100vh;line-height:1.5;-webkit-font-smoothing:antialiased}
 h1,h2,h3{font:inherit}
-.app{max-width:680px;margin:0 auto;padding:calc(var(--space)*2);padding-bottom:calc(var(--space)*6)}
-.header{background:var(--navy);border-radius:var(--radius-lg);padding:calc(var(--space)*3);margin-bottom:calc(var(--space)*3);display:flex;align-items:center;justify-content:space-between;gap:var(--space);box-shadow:var(--shadow)}
-.brand{display:flex;flex-direction:column;gap:2px}
+.app{max-width:680px;margin:0 auto;padding:16px;padding-bottom:48px}
+.header{background:var(--navy);border-radius:var(--radius-lg);padding:24px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:8px;box-shadow:var(--shadow)}
 .brand-name{font-size:20px;font-weight:800;letter-spacing:.5px;color:var(--white);line-height:1.1}
 .brand-name span{color:var(--teal)}
-.brand-status{font-size:12px;color:rgba(255,255,255,.55);letter-spacing:.3px}
+.brand-status{font-size:12px;color:rgba(255,255,255,.55);letter-spacing:.3px;margin-top:2px}
 .tabs{display:flex;background:rgba(255,255,255,.1);border-radius:var(--radius-sm);padding:3px;gap:2px}
 .tab-btn{padding:7px 18px;border-radius:6px;border:none;cursor:pointer;font-size:13px;font-weight:600;transition:background .15s,color .15s;line-height:1;white-space:nowrap}
 .tab-btn.active{background:var(--teal);color:var(--navy)}
 .tab-btn.inactive{background:transparent;color:rgba(255,255,255,.6)}
 .tab-btn.inactive:hover{background:rgba(255,255,255,.12);color:var(--white)}
-.card{background:var(--white);border-radius:var(--radius-lg);padding:calc(var(--space)*3);margin-bottom:calc(var(--space)*2);box-shadow:var(--shadow-sm);border:1px solid var(--gray-200)}
-.card-title{font-size:13px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:calc(var(--space)*2.5)}
-.form-group{margin-bottom:calc(var(--space)*2)}
+.card{background:var(--white);border-radius:var(--radius-lg);padding:24px;margin-bottom:16px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200)}
+.card-title{font-size:13px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.8px;margin-bottom:20px}
+.card-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.form-group{margin-bottom:16px}
 .form-group:last-child{margin-bottom:0}
 .form-label{display:block;font-size:13px;font-weight:600;color:var(--gray-600);margin-bottom:6px}
 .form-control{width:100%;padding:11px 14px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:15px;font-family:var(--font);outline:none;background:var(--white);color:var(--gray-800);transition:border-color .15s;appearance:none;-webkit-appearance:none}
 select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px;cursor:pointer}
 .form-control:focus{border-color:var(--teal)}
-.budget-box{border:2px solid var(--gray-200);border-radius:var(--radius-sm);padding:12px 14px;background:var(--gray-50);margin-bottom:calc(var(--space)*2);font-size:13px}
+.budget-box{border:2px solid var(--gray-200);border-radius:var(--radius-sm);padding:12px 14px;background:var(--gray-50);margin-bottom:16px;font-size:13px}
 .budget-box.warn{border-color:var(--amber);background:#fffbf0}
 .budget-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
 .budget-label{font-weight:600;color:var(--navy)}
@@ -47,8 +47,8 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .bar-track{background:var(--gray-200);border-radius:99px;height:7px;overflow:hidden;margin-bottom:5px}
 .bar-fill{height:100%;border-radius:99px;transition:width .3s,background .3s}
 .budget-meta{color:var(--gray-400);font-size:11px}
-.limit-reached{background:var(--red-lt);border:2px solid var(--red);border-radius:var(--radius-sm);padding:12px 14px;color:#c73652;font-size:13px;font-weight:600;margin-bottom:calc(var(--space)*2)}
-.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:calc(var(--space)*1.5)}
+.limit-reached{background:var(--red-lt);border:2px solid var(--red);border-radius:var(--radius-sm);padding:12px 14px;color:#c73652;font-size:13px;font-weight:600;margin-bottom:16px}
+.product-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .product-card{border:2px solid var(--gray-200);border-radius:var(--radius);padding:14px;transition:border-color .15s,background .15s}
 .product-card.selected{border-color:var(--teal);background:var(--teal-lt)}
 .product-name{font-size:13px;font-weight:700;color:var(--navy);line-height:1.3}
@@ -61,7 +61,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .summary-line{display:flex;justify-content:space-between;padding:7px 0;font-size:13px;border-bottom:1px solid var(--gray-100);color:var(--gray-600)}
 .summary-line:last-child{border-bottom:none}
 .summary-total{display:flex;justify-content:space-between;padding:12px 0 0;margin-top:4px;font-size:16px;font-weight:800;color:var(--navy);border-top:2px solid var(--gray-200)}
-.excess-box{background:#fffbf0;border:2px solid var(--amber);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:calc(var(--space)*2)}
+.excess-box{background:#fffbf0;border:2px solid var(--amber);border-radius:var(--radius-sm);padding:14px 16px;margin-bottom:16px}
 .excess-title{font-size:13px;font-weight:700;color:#d97706;margin-bottom:10px}
 .excess-row{display:flex;justify-content:space-between;font-size:13px;color:var(--gray-600);margin-bottom:5px}
 .excess-note{font-size:11px;color:var(--gray-400);font-style:italic;margin-bottom:12px}
@@ -73,20 +73,20 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .btn-primary:disabled{background:var(--gray-200);color:var(--gray-400);cursor:not-allowed;box-shadow:none}
 .btn-secondary{padding:10px 24px;background:var(--gray-100);color:var(--navy);border:none;border-radius:var(--radius-sm);font-size:14px;font-weight:600;cursor:pointer;transition:background .15s}
 .btn-secondary:hover{background:var(--gray-200)}
-.state-screen{text-align:center;padding:calc(var(--space)*5) calc(var(--space)*2)}
+.state-screen{text-align:center;padding:40px 16px}
 .state-icon{font-size:52px;margin-bottom:16px;line-height:1}
 .state-title{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px}
 .state-msg{font-size:14px;color:var(--gray-400);max-width:280px;margin:0 auto 24px}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:calc(var(--space)*1.5);margin-bottom:calc(var(--space)*2)}
-.stat-card{background:var(--navy);border-radius:var(--radius);padding:calc(var(--space)*2) calc(var(--space)*1.5);text-align:center}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stat-card{background:var(--navy);border-radius:var(--radius);padding:16px 12px;text-align:center}
 .stat-num{font-size:24px;font-weight:800;color:var(--teal);line-height:1.1}
 .stat-label{font-size:11px;color:rgba(255,255,255,.5);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
 .data-table{width:100%;border-collapse:collapse;font-size:13px}
 .data-table th{background:var(--gray-50);padding:9px 10px;text-align:left;font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gray-200)}
 .data-table td{padding:9px 10px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);vertical-align:middle}
 .data-table tr:last-child td{border-bottom:none}
-.data-table input[type=number],.data-table input[type=text]{padding:5px 8px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;background-image:none;font-family:var(--font)}
-.data-table input[type=number]{width:80px;text-align:center}
+.data-table input[type=number],.data-table input[type=text]{padding:5px 8px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;font-family:var(--font)}
+.data-table input[type=number]{width:86px;text-align:center}
 .data-table input:focus{border-color:var(--teal)}
 .usage-wrap{display:inline-flex;align-items:center;gap:8px}
 .mini-bar-track{background:var(--gray-200);border-radius:99px;height:5px;width:56px;overflow:hidden;flex-shrink:0}
@@ -101,7 +101,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .prod-bar-fill{background:var(--teal);height:100%;border-radius:99px}
 .prod-units{font-size:14px;font-weight:800;color:var(--teal-dk);white-space:nowrap}
 .inline-row{display:flex;gap:8px;align-items:center}
-.inline-row input{flex:1;padding:10px 12px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;background-image:none;font-family:var(--font)}
+.inline-row input{flex:1;padding:10px 12px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;font-family:var(--font)}
 .inline-row input:focus{border-color:var(--teal)}
 .inline-row .lbl{font-size:13px;font-weight:600;color:var(--gray-600);white-space:nowrap}
 .btn-sm{padding:9px 16px;border-radius:var(--radius-sm);border:none;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .15s}
@@ -110,22 +110,22 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .btn-green{background:var(--green);color:var(--white)} .btn-danger{background:#fee2e2;color:#991b1b}
 .btn-neutral{background:var(--teal-lt);color:var(--navy)}
 .txt-red{color:var(--red)} .txt-navy{color:var(--navy);font-size:14px;font-weight:700}
-.txt-muted{color:var(--gray-400)} .txt-branch{color:var(--gray-600)} .txt-semi{font-weight:600}
-.txt-total{font-weight:700;color:var(--teal-dk)} .txt-time{font-size:11px;color:var(--gray-400)} .txt-items{color:var(--gray-600);font-size:12px}
-.txt-strong{font-weight:700} .prod-price-dim{color:var(--gray-400);font-weight:400}
-.card-header-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.txt-muted{color:var(--gray-400)} .txt-semi{font-weight:600} .txt-strong{font-weight:700}
+.txt-total{font-weight:700;color:var(--teal-dk)} .txt-time{font-size:11px;color:var(--gray-400)}
+.txt-items{color:var(--gray-600);font-size:12px} .txt-branch{color:var(--gray-600)}
+.prod-price-dim{color:var(--gray-400);font-weight:400}
 .btn-icon{background:none;border:none;cursor:pointer;color:var(--gray-400);font-size:16px;padding:2px 4px;line-height:1;transition:color .15s}
 .btn-icon:hover{color:var(--red)}
 .btn-icon.edit:hover{color:var(--teal-dk)}
 .action-row{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .action-row .btn-sm{flex:1;min-width:120px;text-align:center}
 .cutoff-note{font-size:12px;color:var(--gray-400);margin-top:6px}
-.login-wrap{max-width:320px;margin:0 auto;padding:calc(var(--space)*5) 0;text-align:center}
+.login-wrap{max-width:320px;margin:0 auto;padding:40px 0;text-align:center}
 .login-title{font-size:18px;font-weight:800;color:var(--navy);margin-bottom:6px}
 .login-sub{font-size:13px;color:var(--gray-400);margin-bottom:24px}
 .login-wrap .form-control{text-align:center;letter-spacing:2px;margin-bottom:12px}
 .scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.empty{text-align:center;padding:calc(var(--space)*4) 0;color:var(--gray-400);font-size:14px}
+.empty{text-align:center;padding:32px 0;color:var(--gray-400);font-size:14px}
 .hidden{display:none!important}
 .overlay{position:fixed;inset:0;background:var(--gray-50);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;text-align:center;padding:24px}
 .spinner{width:40px;height:40px;border:3px solid var(--gray-200);border-top-color:var(--teal);border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px}
@@ -139,15 +139,22 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .edit-panel input{flex:1;padding:8px 10px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;font-family:var(--font);background:var(--white)}
 .edit-panel input:focus{border-color:var(--teal)}
 .staff-contact{font-size:11px;color:var(--gray-400);margin-top:2px}
+/* Toggle switch */
+.toggle{position:relative;display:inline-block;width:38px;height:22px;flex-shrink:0;vertical-align:middle}
+.toggle input{opacity:0;width:0;height:0;position:absolute}
+.toggle-track{position:absolute;inset:0;background:var(--gray-200);border-radius:99px;cursor:pointer;transition:background .15s}
+.toggle-track::before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:var(--white);border-radius:50%;transition:transform .15s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked + .toggle-track{background:var(--teal)}
+.toggle input:checked + .toggle-track::before{transform:translateX(16px)}
+tr.prod-inactive td:not(:first-child){opacity:.4}
 @media(max-width:480px){
-  .app{padding:var(--space)} .header{padding:calc(var(--space)*2)} .brand-name{font-size:18px}
-  .card{padding:calc(var(--space)*2.5)} .product-grid,.stats-grid{gap:var(--space)}
+  .app{padding:8px} .header{padding:16px} .brand-name{font-size:18px}
+  .card{padding:20px} .product-grid,.stats-grid{gap:8px}
   .stat-num{font-size:20px} .tab-btn{padding:7px 12px;font-size:12px}
   .action-row{gap:6px} .action-row .btn-sm{font-size:12px;padding:8px 10px}
   .data-table th,.data-table td{padding:8px}
   .edit-panel{flex-wrap:wrap}
 }
-#staff-table-body tr:nth-last-child(2) td{border-bottom:none}
 @media(max-width:340px){.product-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -168,7 +175,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 <div class="app hidden" id="app-content">
 
   <header class="header">
-    <div class="brand">
+    <div>
       <h1 class="brand-name">✦ <span>GLO</span> Ordering</h1>
       <div class="brand-status" id="header-status">Staff Order Portal</div>
     </div>
@@ -194,24 +201,32 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
           <label class="form-label">Branch</label>
           <select class="form-control" id="staff-branch">
             <option value="">— Select branch —</option>
-            <option>Mid Valley (MV)</option><option>KLCC</option>
-            <option>Bangsar Village 2 (BV)</option><option>Plaza Arkadia (AK)</option>
-            <option>Leisure Mall (LM)</option><option>Sogo KL (SG)</option>
-            <option>One Utama (OU)</option><option>Sunway Pyramid (SP)</option>
-            <option>The Glo Clinic BV (GC)</option><option>The Glo Clinic Avenue K (AVK)</option>
+            <option>Bangsar Village 2 (BV)</option>
             <option>HQ</option>
+            <option>KLCC</option>
+            <option>Leisure Mall (LM)</option>
+            <option>Mid Valley (MV)</option>
+            <option>One Utama (OU)</option>
+            <option>Plaza Arkadia (AK)</option>
+            <option>Sogo KL (SG)</option>
+            <option>Sunway Pyramid (SP)</option>
+            <option>The Glo Clinic Avenue K (AVK)</option>
+            <option>The Glo Clinic BV (GC)</option>
           </select>
         </div>
       </div>
+
       <div class="card">
         <h2 class="card-title">Select Products</h2>
         <div class="product-grid" id="product-grid"></div>
       </div>
+
       <div class="card hidden" id="summary-card">
         <h2 class="card-title">Order Summary</h2>
         <div id="summary-lines"></div>
         <div class="summary-total"><span>Total</span><span id="summary-total-val">RM 0.00</span></div>
       </div>
+
       <div id="excess-payment-section"></div>
       <button class="btn-primary" id="submit-btn" onclick="submitOrder()">Submit Order</button>
     </div>
@@ -265,14 +280,9 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 
       <div class="card">
         <h2 class="card-title">Staff &amp; Limits</h2>
-        <div class="inline-row" style="margin-bottom:16px">
-          <span class="lbl">Default limit (RM):</span>
-          <input type="number" id="global-limit-input" min="1" max="99999" value="500" style="max-width:110px" />
-          <button class="btn-sm btn-teal" onclick="saveGlobalLimit()">Save</button>
-        </div>
         <div class="scroll-x">
           <table class="data-table">
-            <thead><tr><th>Name</th><th>Used / Limit</th><th>Limit (RM)</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>Name</th><th>Used</th><th>Limit (RM)</th><th>Status</th><th></th></tr></thead>
             <tbody id="staff-table-body"></tbody>
           </table>
         </div>
@@ -328,42 +338,44 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbzthHyWarA5dLbctjQ-UQ3Bs83yL_-QdP4Qz3qDPU2ioXRTteIqFwsSZ5xZ_Bc0PLc/exec";
 
 const DEFAULT_CONTACTS = {
-  "CHERYN":"60126480270","PAULINE":"60124623916","LEANNE":"60122010029","NICKO":"601111191939",
-  "ZETTY":"60124630570","BERNICE":"60167428821","WEN KHAI":"60176858029","CAROL":"60126118116",
-  "ELLIE":"60169008971","SUET MUN":"60102595107","WEE YANG":"601110887137","EMILY":"60182466297",
-  "JOLENE":"60169282916","CARMEN":"60183500367","DIANA":"60127197276","MIKI":"601119936868",
-  "SAMMI":"60196001413","BOW BOW":"60169264110","CHRISTINE":"60169172882","FIKA":"60154678930",
-  "JOASNIDA":"601112481107","KEYRA":"61139874355","ROS":"6089765611","SOPHIA":"60183658900",
-  "LIDYA":"60192391334","WENDY":"601118714557","IFFAH":"60182983150","MARINA":"601121559620",
-  "ANNA":"60166000708","SHA":"60188715547","JANET":"60124151075","JANIICE":"60145192429",
-  "APPLE":"60168195029","CANDISE":"601123226384","LILY":"60178565089","IRAH":"60176356120",
-  "FAI":"601121778372","TRAMY":"60126834343","PENNY":"60163444881","DR LYN":"60123230875",
+  "ANNA":"60166000708","APPLE":"60168195029","BERNICE":"60167428821","BOW BOW":"60169264110",
+  "CANDISE":"601123226384","CAROL":"60126118116","CARMEN":"60183500367","CHERYN":"60126480270",
+  "CHRISTINE":"60169172882","DIANA":"60127197276","DR LYN":"60123230875","ELLIE":"60169008971",
+  "EMILY":"60182466297","FAI":"601121778372","FIKA":"60154678930","IRAH":"60176356120",
+  "JANET":"60124151075","JANIICE":"60145192429","JOASNIDA":"601112481107","JOLENE":"60169282916",
+  "KEYRA":"61139874355","LEANNE":"60122010029","LIDYA":"60192391334","LILY":"60178565089",
+  "MARINA":"601121559620","MIKI":"601119936868","NICKO":"601111191939","PAULINE":"60124623916",
+  "PENNY":"60163444881","ROS":"6089765611","SAMMI":"60196001413","SHA":"60188715547",
+  "SOPHIA":"60183658900","SUET MUN":"60102595107","TRAMY":"60126834343","WEE YANG":"601110887137",
+  "WEN KHAI":"60176858029","WENDY":"601118714557","ZETTY":"60124630570",
 };
 const DEFAULT_PRODUCTS = [
-  {name:"Glo Clean",price:168},{name:"Glo Reveal",price:168},{name:"Glo Protect+",price:168},
-  {name:"Glo Hydraglo+ Mask",price:188},{name:"Glo Hydro+",price:258},{name:"Glo Bright+",price:288},{name:"Glo Nourish",price:178},
+  {name:"Glo Clean",price:168,active:true},{name:"Glo Reveal",price:168,active:true},
+  {name:"Glo Protect+",price:168,active:true},{name:"Glo Hydraglo+ Mask",price:188,active:true},
+  {name:"Glo Hydro+",price:258,active:true},{name:"Glo Bright+",price:288,active:true},
+  {name:"Glo Nourish",price:178,active:true},
 ];
 
 // ── State ─────────────────────────────────────────────────────────
-let PRODUCTS=[], staffList=[], orders=[], limits={}, contacts={}, globalLim=500, cutoff='', isOpen=true, adminLoggedIn=false, qty={};
+let PRODUCTS=[], staffList=[], orders=[], limits={}, contacts={}, cutoff='', isOpen=true, adminLoggedIn=false, qty={};
 
 // ── Utilities ─────────────────────────────────────────────────────
 const el        = id => document.getElementById(id);
 const show      = id => el(id).classList.remove('hidden');
 const hide      = id => el(id).classList.add('hidden');
-const key       = n  => n.replace(/[^a-zA-Z0-9]/g,'_');
+const slug      = n  => n.replace(/[^a-zA-Z0-9]/g,'_');
 const isClosed  = () => !isOpen || (!!cutoff && new Date() > new Date(cutoff));
-const limitFor  = n  => limits[n] ?? globalLim;
 const usedBy    = n  => orders.filter(o=>o.name===n).reduce((s,o)=>s+Number(o.total),0);
-const remainFor = n  => n ? Math.max(0,limitFor(n)-usedBy(n)) : Infinity;
-const hasMaxed  = n  => !!n && remainFor(n)<=0;
-const cartTotal = () => PRODUCTS.reduce((s,p)=>s+qty[p.name]*p.price,0);
+const remainFor = n  => limits[n]!==undefined ? Math.max(0,limits[n]-usedBy(n)) : Infinity;
+const hasMaxed  = n  => !!n && limits[n]!==undefined && usedBy(n)>=limits[n];
+const activeProducts = () => PRODUCTS.filter(p=>p.active!==false);
+const cartTotal = () => activeProducts().reduce((s,p)=>s+qty[p.name]*p.price,0);
 const parseItems= t  => String(t||'').split(',').map(s=>{const m=s.trim().match(/^(.+)\s+×(\d+)$/);return m?{name:m[1].trim(),qty:+m[2]}:null;}).filter(Boolean);
-const pushConfig= async(k,v) => fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'config',key:k,value:v})}).catch(()=>{});
+const pushConfig= (k,v) => fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'config',key:k,value:v})}).catch(()=>{});
 
 const saveP = async () => { initGrid(); renderProducts(); renderAdmin(); await pushConfig('products',PRODUCTS); };
 const saveS = async () => { populateStaffDropdown(); renderAdmin(); await pushConfig('staff',staffList); };
-const saveC = async () => { await pushConfig('contacts',contacts); };
+const saveC = async () => pushConfig('contacts',contacts);
 const saveL = async () => { renderAdmin(); await pushConfig('limits',limits); };
 
 // ── Boot ──────────────────────────────────────────────────────────
@@ -371,13 +383,14 @@ async function init() {
   show('loading-overlay'); hide('error-overlay'); hide('app-content');
   try {
     const {config:c={}, orders:o=[]} = await fetch(SHEET_URL+'?action=all').then(r=>r.json());
-    PRODUCTS  = c.products?.length ? c.products : DEFAULT_PRODUCTS.map(p=>({...p}));
-    staffList = c.staff?.length    ? c.staff    : Object.keys(DEFAULT_CONTACTS);
-    limits    = c.limits    || {};
-    globalLim = +c.globalLim || 500;
-    cutoff    = c.cutoff    || '';
-    isOpen    = c.isOpen    !== false;
-    contacts  = (c.contacts && Object.keys(c.contacts).length) ? c.contacts : {...DEFAULT_CONTACTS};
+    PRODUCTS  = (c.products?.length ? c.products : DEFAULT_PRODUCTS).map(p=>({active:true,...p}));
+    staffList = (c.staff?.length ? c.staff : Object.keys(DEFAULT_CONTACTS)).sort();
+    limits    = c.limits   || {};
+    cutoff    = c.cutoff   || '';
+    isOpen    = c.isOpen   !== false;
+    const hasContacts = c.contacts && Object.keys(c.contacts).length;
+    contacts  = hasContacts ? c.contacts : {...DEFAULT_CONTACTS};
+    if (!hasContacts) pushConfig('contacts',contacts);
     orders    = o;
     qty       = Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
     hide('loading-overlay'); show('app-content');
@@ -398,7 +411,9 @@ async function adminRefresh() {
 function switchTab(tab) {
   ['staff','admin'].forEach(t=>el('tab-'+t).classList.toggle('hidden',t!==tab));
   document.querySelectorAll('.tab-btn').forEach((b,i)=>{
-    const a=(i===0)===(tab==='staff'); b.className='tab-btn '+(a?'active':'inactive'); b.setAttribute('aria-selected',a);
+    const a=(i===0)===(tab==='staff');
+    b.className='tab-btn '+(a?'active':'inactive');
+    b.setAttribute('aria-selected',a);
   });
   if (tab==='staff') checkStatus();
   if (tab==='admin' && adminLoggedIn) adminRefresh();
@@ -407,49 +422,59 @@ function switchTab(tab) {
 // ── Staff Tab ─────────────────────────────────────────────────────
 function populateStaffDropdown() {
   const s=el('staff-name'), prev=s.value;
-  s.innerHTML='<option value="">— Select your name —</option>'+staffList.map(n=>`<option>${n}</option>`).join('');
+  s.innerHTML='<option value="">— Select your name —</option>'+
+    [...staffList].sort().map(n=>`<option>${n}</option>`).join('');
   if (prev) s.value=prev;
 }
 
 function onStaffChange() {
   const name=el('staff-name').value, msg=el('limit-status-msg');
   if (!name) { msg.innerHTML=''; updateSummary(); return; }
-  const used=usedBy(name), lim=limitFor(name), rem=Math.max(0,lim-used);
-  const pct=Math.min(used/lim,1)*100, warn=pct>=70, full=used>=lim;
-  msg.innerHTML = full
-    ? `<div class="limit-reached">⛔ ${name} has reached the order limit (RM${used.toFixed(2)} / RM${lim.toFixed(2)}). Contact admin.</div>`
-    : `<div class="budget-box${warn?' warn':''}" id="budget-info-box">
-        <div class="budget-header"><span class="budget-label">Ordering budget</span>
-          <span class="budget-value ${warn?'warn':'ok'}" id="budget-remaining-text">RM${rem.toFixed(2)} remaining</span></div>
-        <div class="bar-track"><div class="bar-fill" id="budget-bar-fill-live" style="width:${pct}%;background:${warn?'var(--amber)':'var(--green)'}"></div></div>
-        <div class="budget-meta">Used RM${used.toFixed(2)} of RM${lim.toFixed(2)}</div></div>`;
-  el('submit-btn').disabled = full;
+  const lim=limits[name];
+  if (lim===undefined) {
+    msg.innerHTML='';
+  } else {
+    const used=usedBy(name), rem=Math.max(0,lim-used);
+    const pct=Math.min(used/lim,1)*100, warn=pct>=70, full=used>=lim;
+    msg.innerHTML = full
+      ? `<div class="limit-reached">⛔ ${name} has reached the order limit (RM${used.toFixed(2)} / RM${lim.toFixed(2)}). Contact admin.</div>`
+      : `<div class="budget-box${warn?' warn':''}" id="budget-info-box">
+          <div class="budget-header"><span class="budget-label">Ordering budget</span>
+            <span class="budget-value ${warn?'warn':'ok'}" id="budget-remaining-text">RM${rem.toFixed(2)} remaining</span></div>
+          <div class="bar-track"><div class="bar-fill" id="budget-bar-fill-live" style="width:${pct}%;background:${warn?'var(--amber)':'var(--green)'}"></div></div>
+          <div class="budget-meta">Used RM${used.toFixed(2)} of RM${lim.toFixed(2)}</div></div>`;
+  }
+  el('submit-btn').disabled=hasMaxed(name);
   updateSummary();
 }
 
 function initGrid() {
-  qty = Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
-  el('product-grid').innerHTML = PRODUCTS.map(p=>`
-    <div class="product-card" id="pc-${key(p.name)}">
-      <div class="product-name">${p.name}</div>
-      <div class="product-price">RM ${p.price}</div>
-      <div class="qty-row">
-        <button class="qty-btn" onclick="changeQty('${p.name}',-1)">−</button>
-        <span class="qty-display" id="q-${key(p.name)}">0</span>
-        <button class="qty-btn" onclick="changeQty('${p.name}',1)">+</button>
-      </div></div>`).join('');
+  qty=Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
+  const active=activeProducts();
+  el('product-grid').innerHTML=active.length
+    ? active.map(p=>`
+      <div class="product-card" id="pc-${slug(p.name)}">
+        <div class="product-name">${p.name}</div>
+        <div class="product-price">RM ${p.price}</div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty('${p.name}',-1)">−</button>
+          <span class="qty-display" id="q-${slug(p.name)}">0</span>
+          <button class="qty-btn" onclick="changeQty('${p.name}',1)">+</button>
+        </div></div>`).join('')
+    : '<div class="empty">No products available.</div>';
 }
 
 function changeQty(name,d) {
-  qty[name] = Math.max(0,qty[name]+d);
-  el('q-'+key(name)).textContent = qty[name];
-  el('pc-'+key(name)).classList.toggle('selected',qty[name]>0);
+  qty[name]=Math.max(0,qty[name]+d);
+  el('q-'+slug(name)).textContent=qty[name];
+  el('pc-'+slug(name)).classList.toggle('selected',qty[name]>0);
   updateSummary();
 }
 
 function updateBudgetBar() {
   const bf=el('budget-bar-fill-live'); if(!bf) return;
-  const name=el('staff-name').value, used=usedBy(name), lim=limitFor(name), tot=used+cartTotal();
+  const name=el('staff-name').value, lim=limits[name]; if(lim===undefined) return;
+  const used=usedBy(name), tot=used+cartTotal();
   const pct=Math.min(tot/lim,1)*100, warn=pct>=70, over=tot>lim;
   bf.style.cssText=`width:${pct}%;background:${over?'var(--red)':warn?'var(--amber)':'var(--green)'}`;
   const rt=el('budget-remaining-text');
@@ -458,14 +483,15 @@ function updateBudgetBar() {
 }
 
 function updateSummary() {
-  const sel=PRODUCTS.filter(p=>qty[p.name]>0), sc=el('summary-card'), ex=el('excess-payment-section'), btn=el('submit-btn');
-  if (!sel.length) { sc.classList.add('hidden'); ex.innerHTML=''; btn.disabled=false; updateBudgetBar(); return; }
+  const sel=activeProducts().filter(p=>qty[p.name]>0);
+  const sc=el('summary-card'), ex=el('excess-payment-section'), btn=el('submit-btn');
+  if (!sel.length) { sc.classList.add('hidden'); ex.innerHTML=''; if(!hasMaxed(el('staff-name').value)) btn.disabled=false; updateBudgetBar(); return; }
   const total=sel.reduce((s,p)=>s+qty[p.name]*p.price,0);
   sc.classList.remove('hidden');
-  el('summary-lines').innerHTML = sel.map(p=>`<div class="summary-line"><span>${p.name} × ${qty[p.name]}</span><span>RM ${(p.price*qty[p.name]).toFixed(2)}</span></div>`).join('');
-  el('summary-total-val').textContent = 'RM '+total.toFixed(2);
+  el('summary-lines').innerHTML=sel.map(p=>`<div class="summary-line"><span>${p.name} × ${qty[p.name]}</span><span>RM ${(p.price*qty[p.name]).toFixed(2)}</span></div>`).join('');
+  el('summary-total-val').textContent='RM '+total.toFixed(2);
   const name=el('staff-name').value;
-  if (name) {
+  if (name && limits[name]!==undefined) {
     const rem=remainFor(name);
     if (total>rem) {
       const excess=total-rem;
@@ -493,8 +519,8 @@ function submitOrder() {
   if (hasMaxed(name)) return alert(`Order limit reached for ${name}. Contact admin.`);
   const total=cartTotal();
   if (!total) return alert('Please select at least one product.');
-  if (total>remainFor(name) && !el('payment-done-cb')?.checked) return alert('Tick "Payment Done" first.');
-  const items=PRODUCTS.filter(p=>qty[p.name]>0).map(p=>({name:p.name,qty:qty[p.name],price:p.price}));
+  if (limits[name]!==undefined && total>remainFor(name) && !el('payment-done-cb')?.checked) return alert('Tick "Payment Done" first.');
+  const items=activeProducts().filter(p=>qty[p.name]>0).map(p=>({name:p.name,qty:qty[p.name],price:p.price}));
   const order={id:orders.length+1,name,contact:contacts[name]||'',sid:branch,items,total,time:new Date().toLocaleString('en-MY')};
   orders.push(order);
   fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'order',...order})}).catch(()=>{});
@@ -522,27 +548,31 @@ function checkStatus() {
 
 // ── Admin Tab ─────────────────────────────────────────────────────
 async function adminLogin() {
-  if (el('admin-pw').value !== 'getgloing1234') return alert('Wrong password.');
+  if (el('admin-pw').value!=='getgloing1234') return alert('Wrong password.');
   adminLoggedIn=true; hide('admin-login-view'); show('admin-dashboard');
   await refreshOrders(); renderAdmin();
 }
 
 function renderAdmin() {
-  el('stat-orders').textContent = orders.length;
-  el('stat-items').textContent  = orders.reduce((s,o)=>s+(o.items||parseItems(o.itemsText)).reduce((a,i)=>a+Number(i.qty),0),0);
-  el('stat-rev').textContent    = 'RM'+orders.reduce((s,o)=>s+Number(o.total),0).toFixed(0);
-  el('global-limit-input').value = globalLim;
+  el('stat-orders').textContent=orders.length;
+  el('stat-items').textContent=orders.reduce((s,o)=>s+(o.items||parseItems(o.itemsText)).reduce((a,i)=>a+Number(i.qty),0),0);
+  el('stat-rev').textContent='RM'+orders.reduce((s,o)=>s+Number(o.total),0).toFixed(0);
+
   renderProducts();
 
-  el('staff-table-body').innerHTML = staffList.map(n=>{
-    const used=usedBy(n), lim=limitFor(n), pct=Math.min(used/lim,1)*100, full=used>=lim;
-    const bc=full?'var(--red)':pct>=70?'var(--amber)':'var(--green)';
-    const k=key(n);
+  el('staff-table-body').innerHTML=[...staffList].sort().map(n=>{
+    const used=usedBy(n), lim=limits[n], hasLim=lim!==undefined;
+    const pct=hasLim?Math.min(used/lim,1)*100:0;
+    const bc=hasLim&&used>=lim?'var(--red)':pct>=70?'var(--amber)':'var(--green)';
+    const k=slug(n);
+    const badge=hasLim&&used>=lim?['badge-full','LIMIT HIT']:used>0?['badge-warn',`RM${used.toFixed(0)} used`]:['badge-ok','Clear'];
     return `<tr>
       <td class="txt-strong">${n}<div class="staff-contact">${contacts[n]||'—'}</div></td>
-      <td><div class="usage-wrap"><span>RM${used.toFixed(0)}</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%;background:${bc}"></div></div></div></td>
-      <td><input type="number" min="1" max="99999" value="${lim}" onchange="setStaffLimit('${n}',this.value)"/></td>
-      <td><span class="badge ${full?'badge-full':used>0?'badge-warn':'badge-ok'}">${full?'LIMIT HIT':used>0?`RM${used.toFixed(0)} used`:'Clear'}</span></td>
+      <td>${hasLim
+        ?`<div class="usage-wrap"><span>RM${used.toFixed(0)}</span><div class="mini-bar-track"><div class="mini-bar-fill" style="width:${pct}%;background:${bc}"></div></div></div>`
+        :`<span class="txt-muted">RM${used.toFixed(0)}</span>`}</td>
+      <td><input type="number" min="1" max="99999" value="${hasLim?lim:''}" placeholder="No limit" onchange="setStaffLimit('${n}',this.value)"/></td>
+      <td><span class="badge ${badge[0]}">${badge[1]}</span></td>
       <td style="white-space:nowrap">
         <button class="btn-icon edit" title="Edit" onclick="toggleEditRow('${k}')">✎</button>
         <button class="btn-icon" onclick="removeStaff('${n}')">✕</button>
@@ -563,7 +593,7 @@ function renderAdmin() {
   const pt=Object.fromEntries(PRODUCTS.map(p=>[p.name,0]));
   orders.forEach(o=>(o.items||parseItems(o.itemsText)).forEach(i=>{ if(i.name in pt) pt[i.name]+=Number(i.qty); }));
   const maxQ=Math.max(...Object.values(pt),1);
-  el('prod-summary').innerHTML = PRODUCTS.map(p=>`
+  el('prod-summary').innerHTML=PRODUCTS.map(p=>`
     <div class="prod-row">
       <div class="prod-info">
         <div class="prod-row-name">${p.name} <span class="prod-price-dim">· RM${p.price}</span></div>
@@ -572,7 +602,7 @@ function renderAdmin() {
       <div class="prod-units">${pt[p.name]} units</div>
     </div>`).join('');
 
-  el('orders-body').innerHTML = orders.map(o=>`<tr>
+  el('orders-body').innerHTML=orders.map(o=>`<tr>
     <td class="txt-muted">#${o.id}</td><td class="txt-semi">${o.name}</td><td class="txt-branch">${o.sid}</td>
     <td class="txt-items">${o.itemsText||(o.items||[]).map(i=>i.name+' ×'+i.qty).join(', ')}</td>
     <td class="txt-total">RM${Number(o.total).toFixed(2)}</td><td class="txt-time">${o.time}</td>
@@ -584,22 +614,33 @@ function renderAdmin() {
 }
 
 function renderProducts() {
-  el('products-list').innerHTML = PRODUCTS.length
-    ? `<div class="scroll-x"><table class="data-table"><thead><tr><th>Name</th><th>Price (RM)</th><th></th></tr></thead><tbody>
-        ${PRODUCTS.map((p,i)=>`<tr>
-          <td><input type="text"   value="${p.name}"  onchange="updateProduct(${i},'name',this.value)"/></td>
-          <td><input type="number" value="${p.price}" onchange="updateProduct(${i},'price',this.value)" min="1"/></td>
-          <td><button class="btn-icon" onclick="removeProduct(${i})">✕</button></td>
-        </tr>`).join('')}</tbody></table></div>`
+  el('products-list').innerHTML=PRODUCTS.length
+    ? `<div class="scroll-x"><table class="data-table">
+        <thead><tr><th>Active</th><th>Name</th><th>Price (RM)</th><th></th></tr></thead>
+        <tbody>${PRODUCTS.map((p,i)=>`
+          <tr class="${p.active===false?'prod-inactive':''}">
+            <td><label class="toggle" title="${p.active!==false?'Active':'Inactive'}">
+              <input type="checkbox" ${p.active!==false?'checked':''} onchange="toggleProduct(${i},this.checked)">
+              <span class="toggle-track"></span>
+            </label></td>
+            <td><input type="text" value="${p.name}" onchange="updateProduct(${i},'name',this.value)"/></td>
+            <td><input type="number" value="${p.price}" onchange="updateProduct(${i},'price',this.value)" min="1"/></td>
+            <td><button class="btn-icon" onclick="removeProduct(${i})">✕</button></td>
+          </tr>`).join('')}
+        </tbody></table></div>`
     : '<div class="empty">No products. Add one below.</div>';
 }
 
+async function toggleProduct(i, active) {
+  PRODUCTS[i].active=active;
+  await saveP();
+}
 async function addProduct() {
   const ne=el('new-prod-name'), n=ne.value.trim(), p=parseInt(el('new-prod-price').value);
   if (!n)                            return alert('Enter a product name.');
   if (PRODUCTS.find(x=>x.name===n)) return alert('Product already exists.');
   if (isNaN(p)||p<1)                 return alert('Enter a valid price.');
-  PRODUCTS.push({name:n,price:p}); qty[n]=0; ne.value=''; el('new-prod-price').value='';
+  PRODUCTS.push({name:n,price:p,active:true}); qty[n]=0; ne.value=''; el('new-prod-price').value='';
   await saveP();
 }
 async function removeProduct(i) {
@@ -624,7 +665,7 @@ async function addStaff() {
   const inp=el('new-staff-input'), n=inp.value.trim().toUpperCase(), c=el('new-staff-contact').value.trim();
   if (!n)                    return alert('Enter a staff name.');
   if (staffList.includes(n)) return alert('Name already exists.');
-  staffList.push(n); inp.value=''; el('new-staff-contact').value='';
+  staffList.push(n); staffList.sort(); inp.value=''; el('new-staff-contact').value='';
   if (c) contacts[n]=c;
   await saveS(); if (c) await saveC();
 }
@@ -635,28 +676,22 @@ async function removeStaff(n) {
   await saveS(); await saveC(); await saveL();
 }
 async function setStaffLimit(n, val) {
-  const v=parseInt(val);
+  const trimmed=(val||'').toString().trim();
+  if (!trimmed) { delete limits[n]; await saveL(); return; }
+  const v=parseInt(trimmed);
   if (isNaN(v)||v<1) return alert('Limit must be at least RM 1.');
   limits[n]=v; await saveL();
 }
-async function saveGlobalLimit() {
-  const n=parseInt(el('global-limit-input').value);
-  if (isNaN(n)||n<1) return alert('Default limit must be at least RM 1.');
-  globalLim=n; renderAdmin(); alert('Default limit saved: RM'+n+' per staff.');
-  await pushConfig('globalLim',n);
-}
 
 function toggleEditRow(k) { el('edit-'+k).classList.toggle('hidden'); }
-
 async function saveStaffEdit(oldName) {
-  const k=key(oldName), newName=el('en-'+k).value.trim().toUpperCase(), newContact=el('ec-'+k).value.trim();
+  const k=slug(oldName), newName=el('en-'+k).value.trim().toUpperCase(), newContact=el('ec-'+k).value.trim();
   if (!newName) return alert('Name cannot be empty.');
   if (newName!==oldName && staffList.includes(newName)) return alert('Name already exists.');
-  const idx=staffList.indexOf(oldName);
-  staffList[idx]=newName;
+  staffList[staffList.indexOf(oldName)]=newName; staffList.sort();
   if (newName!==oldName) {
-    if (limits[oldName]!==undefined)  { limits[newName]=limits[oldName]; delete limits[oldName]; }
-    if (contacts[oldName])            { contacts[newName]=contacts[oldName]; delete contacts[oldName]; }
+    if (limits[oldName]!==undefined) { limits[newName]=limits[oldName]; delete limits[oldName]; }
+    if (contacts[oldName])           { contacts[newName]=contacts[oldName]; delete contacts[oldName]; }
   }
   if (newContact) contacts[newName]=newContact; else delete contacts[newName];
   await saveS(); await saveC();
@@ -687,8 +722,7 @@ function exportXLSX() {
     ...orders.map(o=>[o.id,o.name,o.sid,
       o.itemsText||(o.items||[]).map(i=>i.name+' ×'+i.qty).join('; '),
       Number(o.total).toFixed(2),o.time])];
-  const ws=XLSX.utils.aoa_to_sheet(rows);
-  const wb=XLSX.utils.book_new();
+  const ws=XLSX.utils.aoa_to_sheet(rows), wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Orders');
   XLSX.writeFile(wb,'glo_orders_'+new Date().toISOString().split('T')[0]+'.xlsx');
 }
@@ -697,3 +731,4 @@ init();
 </script>
 </body>
 </html>
+
