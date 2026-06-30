@@ -85,6 +85,7 @@ select.form-control{background-image:url("data:image/svg+xml,%3Csvg xmlns='http:
 .data-table th{background:var(--gray-50);padding:9px 10px;text-align:left;font-size:11px;font-weight:700;color:var(--gray-400);text-transform:uppercase;letter-spacing:.5px;border-bottom:2px solid var(--gray-200)}
 .data-table td{padding:9px 10px;border-bottom:1px solid var(--gray-100);color:var(--gray-800);vertical-align:middle}
 .data-table tr:last-child td{border-bottom:none}
+#staff-table-body tr:nth-last-child(2) td{border-bottom:none}
 .data-table input[type=number],.data-table input[type=text]{padding:5px 8px;border:2px solid var(--gray-200);border-radius:var(--radius-sm);font-size:13px;outline:none;font-family:var(--font)}
 .data-table input[type=number]{width:86px;text-align:center}
 .data-table input:focus{border-color:var(--teal)}
@@ -365,7 +366,7 @@ const show      = id => el(id).classList.remove('hidden');
 const hide      = id => el(id).classList.add('hidden');
 const slug      = n  => n.replace(/[^a-zA-Z0-9]/g,'_');
 const isClosed  = () => !isOpen || (!!cutoff && new Date() > new Date(cutoff));
-const usedBy    = n  => orders.filter(o=>o.name===n).reduce((s,o)=>s+Number(o.total),0);
+const usedBy    = n  => orders.reduce((s,o)=>o.name===n?s+Number(o.total):s,0);
 const remainFor = n  => limits[n]!==undefined ? Math.max(0,limits[n]-usedBy(n)) : Infinity;
 const hasMaxed  = n  => !!n && limits[n]!==undefined && usedBy(n)>=limits[n];
 const activeProducts = () => PRODUCTS.filter(p=>p.active!==false);
@@ -373,7 +374,7 @@ const cartTotal = () => activeProducts().reduce((s,p)=>s+qty[p.name]*p.price,0);
 const parseItems= t  => String(t||'').split(',').map(s=>{const m=s.trim().match(/^(.+)\s+×(\d+)$/);return m?{name:m[1].trim(),qty:+m[2]}:null;}).filter(Boolean);
 const pushConfig= (k,v) => fetch(SHEET_URL,{method:'POST',body:JSON.stringify({type:'config',key:k,value:v})}).catch(()=>{});
 
-const saveP = async () => { initGrid(); renderProducts(); renderAdmin(); await pushConfig('products',PRODUCTS); };
+const saveP = async () => { initGrid(); renderAdmin(); await pushConfig('products',PRODUCTS); };
 const saveS = async () => { populateStaffDropdown(); renderAdmin(); await pushConfig('staff',staffList); };
 const saveC = async () => pushConfig('contacts',contacts);
 const saveL = async () => { renderAdmin(); await pushConfig('limits',limits); };
@@ -423,7 +424,7 @@ function switchTab(tab) {
 function populateStaffDropdown() {
   const s=el('staff-name'), prev=s.value;
   s.innerHTML='<option value="">— Select your name —</option>'+
-    [...staffList].sort().map(n=>`<option>${n}</option>`).join('');
+    staffList.map(n=>`<option>${n}</option>`).join('');
   if (prev) s.value=prev;
 }
 
@@ -560,7 +561,7 @@ function renderAdmin() {
 
   renderProducts();
 
-  el('staff-table-body').innerHTML=[...staffList].sort().map(n=>{
+  el('staff-table-body').innerHTML=staffList.map(n=>{
     const used=usedBy(n), lim=limits[n], hasLim=lim!==undefined;
     const pct=hasLim?Math.min(used/lim,1)*100:0;
     const bc=hasLim&&used>=lim?'var(--red)':pct>=70?'var(--amber)':'var(--green)';
@@ -718,12 +719,31 @@ async function clearOrders() {
 
 function exportXLSX() {
   if (!orders.length) return alert('No orders to export.');
-  const rows=[['#','Name','Branch','Items','Total (RM)','Time'],
+
+  // Sheet 1: raw orders
+  const orderRows=[['#','Name','Branch','Items','Total (RM)','Time'],
     ...orders.map(o=>[o.id,o.name,o.sid,
       o.itemsText||(o.items||[]).map(i=>i.name+' ×'+i.qty).join('; '),
       Number(o.total).toFixed(2),o.time])];
-  const ws=XLSX.utils.aoa_to_sheet(rows), wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Orders');
+
+  // Sheet 2: outlet × product pivot
+  const outlets=[...new Set(orders.map(o=>o.sid))].sort();
+  const prods=[...new Set(orders.flatMap(o=>(o.items||parseItems(o.itemsText)).map(i=>i.name)))].sort();
+  const pivot={};
+  orders.forEach(o=>{
+    pivot[o.sid]=pivot[o.sid]||{};
+    (o.items||parseItems(o.itemsText)).forEach(i=>{ pivot[o.sid][i.name]=(pivot[o.sid][i.name]||0)+Number(i.qty); });
+  });
+  const pivotRows=[['Outlet',...prods,'Orders','Value (RM)']];
+  outlets.forEach(sid=>{
+    const outOrders=orders.filter(o=>o.sid===sid);
+    pivotRows.push([sid,...prods.map(p=>pivot[sid]?.[p]||0),outOrders.length,outOrders.reduce((s,o)=>s+Number(o.total),0).toFixed(2)]);
+  });
+  pivotRows.push(['TOTAL',...prods.map(p=>outlets.reduce((s,sid)=>s+(pivot[sid]?.[p]||0),0)),orders.length,orders.reduce((s,o)=>s+Number(o.total),0).toFixed(2)]);
+
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(orderRows),'Orders');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(pivotRows),'By Outlet');
   XLSX.writeFile(wb,'glo_orders_'+new Date().toISOString().split('T')[0]+'.xlsx');
 }
 
@@ -731,4 +751,3 @@ init();
 </script>
 </body>
 </html>
-
